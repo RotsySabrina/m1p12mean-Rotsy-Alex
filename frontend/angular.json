@@ -90,9 +90,21 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/assets/css/bootstrap.min.css",
+              "src/assets/css/kaiadmin.min.css",
+              "src/assets/css/plugins.min.css",
+              "src/assets/css/fonts.min.css",
+              "src/assets/css/demo.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/js/core/jquery-3.7.1.min.js",
+              "src/assets/js/core/popper.min.js",
+              "src/assets/js/core/bootstrap.min.js",
+              "src/assets/js/kaiadmin.min.js",
+              "src/assets/js/demo.js",
+              "src/assets/js/setting-demo.js",
+              "src/assets/js/setting-demo2.js"
+            ]
           }
         }
       }
