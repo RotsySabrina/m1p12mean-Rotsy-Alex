@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // });
 // Routes
 
-app.use('/auth',require('./routes/AuthRoutes'));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 app.use('/categorie_services', require('./routes/categorie_serviceRoutes'));
 
