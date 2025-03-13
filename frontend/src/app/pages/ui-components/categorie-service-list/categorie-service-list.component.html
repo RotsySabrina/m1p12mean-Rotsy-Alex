@@ -1,0 +1,73 @@
+<div class="container">
+
+    <div class="categorie-form">
+        <h2>Ajouter un prestation</h2>
+        <form (ngSubmit)="addCategorie()" #categorieForm="ngForm">
+            <div>
+                <label for="title">Description :</label>
+                <input type="text" id="description" name="description" [(ngModel)]="newCategorie.description"
+                    required />
+            </div>
+
+            <button type="submit" [disabled]="categorieForm.invalid">Ajouter</button>
+        </form>
+    </div>
+
+    <div class="page-inner">
+        <div class="page-header">
+            <h3 class="fw-bold mb-3">DataTables.Net</h3>
+            <ul class="breadcrumbs mb-3">
+                <li class="nav-home">
+                    <a href="#">
+                        <i class="icon-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Tables</a>
+                </li>
+                <li class="separator">
+                    <i class="icon-arrow-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Datatables</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="basic-datatables" class="display table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Prestation</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Prestation</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <tr *ngFor="let categorie of categories; trackBy: trackByCategorie">
+                                        <td>{{ categorie.description }}</td>
+                                        <td><button (click)="deleteCategorie(categorie._id)">Supprimer</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

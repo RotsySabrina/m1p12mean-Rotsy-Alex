@@ -1,0 +1,102 @@
+<div class="service-form">
+    <h2>Ajouter un service</h2>
+    <form (ngSubmit)="addService()" #serviceForm="ngForm">
+        <div>
+            <label for="id_categorie_service">Catégorie :</label>
+            <select id="id_categorie_service" name="id_categorie_service" [(ngModel)]="newService.id_categorie_service"
+                required>
+                <option *ngFor="let categorie of categories" [value]="categorie._id">
+                    {{ categorie.description }}
+                </option>
+            </select>
+        </div>
+        <div>
+            <label for="description">Description :</label>
+            <input type="text" id="description" name="description" [(ngModel)]="newService.description" required />
+        </div>
+        <div>
+            <label for="cout">Coût :</label>
+            <input type="number" id="cout" name="cout" [(ngModel)]="newService.cout" required />
+        </div>
+        <button type="submit" [disabled]="serviceForm.invalid">Ajouter</button>
+    </form>
+</div>
+
+<!-- <div>
+    @for (service of services; track service._id) {
+    <div>
+        <p>{{ service.id_categorie_service.description }}</p>
+        <h2>{{ service.description }}</h2>
+        <p>{{ service.cout }}</p>
+        <button (click)="deleteService(service._id)">Supprimer</button>
+    </div>
+    }
+</div> -->
+
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <mat-card-title>Liste des Services</mat-card-title>
+
+        <div class="table-responsive">
+            <table mat-table [dataSource]="services" class="w-100">
+                <!-- Catégorie -->
+                <ng-container matColumnDef="categorie">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Catégorie </th>
+                    <td mat-cell *matCellDef="let service">
+                        <p>{{ service.id_categorie_service.description }}</p>
+                    </td>
+                </ng-container>
+
+                <!-- Description -->
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Description </th>
+                    <td mat-cell *matCellDef="let service">
+                        <h2>{{ service.description }}</h2>
+                    </td>
+                </ng-container>
+
+                <!-- Coût -->
+                <ng-container matColumnDef="cout">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Coût </th>
+                    <td mat-cell *matCellDef="let service">
+                        <p>{{ service.cout }} Ar</p>
+                    </td>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
+                    <td mat-cell *matCellDef="let service">
+                        <button mat-button color="warn" (click)="deleteService(service._id)">Supprimer</button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+
+        <!-- Ajout d'un nouveau service -->
+        <mat-card-title>Ajouter un Service</mat-card-title>
+        <form (ngSubmit)="addService()">
+            <mat-form-field class="w-100">
+                <mat-label>Description</mat-label>
+                <input matInput [(ngModel)]="newService.description" name="description" required>
+            </mat-form-field>
+
+            <mat-form-field class="w-100">
+                <mat-label>Coût</mat-label>
+                <input matInput type="number" [(ngModel)]="newService.cout" name="cout" required>
+            </mat-form-field>
+
+            <mat-form-field class="w-100">
+                <mat-label>Catégorie</mat-label>
+                <mat-select [(ngModel)]="newService.id_categorie_service" name="id_categorie_service" required>
+                    <mat-option *ngFor="let cat of categories" [value]="cat._id">{{ cat.description }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" type="submit">Ajouter</button>
+        </form>
+    </mat-card-content>
+</mat-card>

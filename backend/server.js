@@ -19,8 +19,11 @@ mongoose.connect(process.env.MONGO_URI, {
 // app.get("/", (req, res) => {
 //   res.send("API en ligne 🚀");
 // });
+
 // Routes
 app.use('/categorie_services', require('./routes/CategorieServiceRoutes'));
+app.use('/services', require('./routes/ServiceRoutes'));
+
 
 app.listen(PORT, () => { console.log(`Serveur en cours sur http://localhost:${PORT}`); });
 
