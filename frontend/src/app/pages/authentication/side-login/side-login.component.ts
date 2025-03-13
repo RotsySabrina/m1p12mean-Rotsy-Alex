@@ -1,29 +1,51 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthentificationService } from '../../../services/authentification.service';
 import { MaterialModule } from 'src/app/material.module';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-side-login',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule],
+  standalone: true, // Ajout de `standalone: true`
   templateUrl: './side-login.component.html',
+  styleUrls: ['./side-login.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MaterialModule
+  ]
 })
-export class AppSideLoginComponent {
-  constructor(private router: Router) {}
+export class AppSideLoginComponent implements OnInit {
 
-  form = new FormGroup({
-    uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    password: new FormControl('', [Validators.required]),
-  });
+  loginForm!: FormGroup;
 
-  get f() {
-    return this.form.controls;
+  constructor(private authService: AuthentificationService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.loginForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      mot_de_passe: new FormControl('', [Validators.required, Validators.minLength(6)])
+    });
   }
 
-  submit() {
-    this.router.navigate(['']);
+  login(): void {
+    if (this.loginForm.invalid) {
+      console.log("Formulaire invalide");
+      return;
+    }
+
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.token);
+        console.log('Connexion réussie');
+        this.router.navigate(['/dashboard']); // Redirection après connexion
+      },
+      error: (err) => {
+        console.error('Erreur de connexion:', err.error.message);
+      }
+    });
   }
 }
