@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategorieServiceService {
-  private apiUrl = 'http://localhost:5000/categorie_services';
+  private apiUrl =  `${environment.apiUrl}/categorie_services`; 
 
   constructor(private http: HttpClient) { }
 
@@ -18,5 +19,12 @@ export class CategorieServiceService {
     return this.http.post(this.apiUrl, categorie);
   }
 
+  updateCategorie(id: string, categorie: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, categorie);
+  }
+  
+  deleteCategorie(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
 }
- 
