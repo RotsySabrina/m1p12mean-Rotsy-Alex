@@ -1,0 +1,88 @@
+<mat-card class="cardWithShadow theme-card">
+    <mat-card-header>
+        <mat-card-title class="m-b-0">Ajouter un véhicule</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="b-t-1">
+        <form (ngSubmit)="addVehicule()" #vehiculeForm="ngForm">
+            <div class="row d-flex align-items-center gap-3">
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Marque</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="text" id="marque" name="marque"
+                            [(ngModel)]="newVehicule.marque" required placeholder="Marque du véhicule" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Modèle</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="text" id="modele" name="modele"
+                            [(ngModel)]="newVehicule.modele" required placeholder="Modèle du véhicule" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Immatriculation</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="text" id="immatriculation" name="immatriculation"
+                            [(ngModel)]="newVehicule.immatriculation" required placeholder="Immatriculation" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Année</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="number" id="annee" name="annee"
+                            [(ngModel)]="newVehicule.annee" required placeholder="Année de fabrication" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="m-t-12 d-flex justify-content-end gap-3">
+                <button mat-flat-button color="primary" type="submit" [disabled]="vehiculeForm.invalid">Ajouter</button>
+                <button mat-stroked-button color="warn" type="reset">Annuler</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <mat-card-title>Liste des véhicules</mat-card-title>
+        <div class="table-responsive">
+            <table mat-table [dataSource]="vehicules" class="w-100">
+                <!-- Marque -->
+                <ng-container matColumnDef="marque">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Marque </th>
+                    <td mat-cell *matCellDef="let vehicule">{{ vehicule.marque }}</td>
+                </ng-container>
+                
+                <!-- Modèle -->
+                <ng-container matColumnDef="modele">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Modèle </th>
+                    <td mat-cell *matCellDef="let vehicule">{{ vehicule.modele }}</td>
+                </ng-container>
+                
+                <!-- Immatriculation -->
+                <ng-container matColumnDef="immatriculation">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Immatriculation </th>
+                    <td mat-cell *matCellDef="let vehicule">{{ vehicule.immatriculation }}</td>
+                </ng-container>
+                
+                <!-- Année -->
+                <ng-container matColumnDef="annee">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Année </th>
+                    <td mat-cell *matCellDef="let vehicule">{{ vehicule.annee }}</td>
+                </ng-container>
+                
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
+                    <td mat-cell *matCellDef="let vehicule">
+                        <button mat-button color="primary" (click)="editVehicule(vehicule)">Modifier</button>
+                        <button mat-button color="warn" (click)="deleteVehicule(vehicule._id)">Supprimer</button>
+                    </td>
+                </ng-container>
+                
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </mat-card-content>
+</mat-card>

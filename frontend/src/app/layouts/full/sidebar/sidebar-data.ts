@@ -14,6 +14,11 @@ export const navItems: NavItem[] = [
     divider: true
   },
   {
+    displayName: 'Véhicule',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/vehicules',
+  },
+  {
     displayName: 'Catégorie',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/categorie_services',
