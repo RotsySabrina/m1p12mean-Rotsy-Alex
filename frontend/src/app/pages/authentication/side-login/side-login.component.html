@@ -9,26 +9,7 @@
             </a>
           </div>
 
-          <div class="row m-t-24 custom-row">
-            <div class="col-6">
-              <button mat-stroked-button class="w-100">
-                <div class="d-flex align-items-center">
-                  <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="m-r-8" />
-                  <span class="d-none d-lg-block">Sign in with Google</span>
-                </div>
-              </button>
-            </div>
-            <div class="col-6">
-              <button mat-stroked-button class="w-100 d-flex align-items-center">
-                <div class="d-flex align-items-center">
-                  <img src="/assets/images/svgs/facebook-icon.svg" alt="facebook" width="40" class="m-r-4" />
-                  <span class="d-none d-lg-block">Sign in with FB</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <div class="or-border m-t-30">or sign in with</div>
+          <div class="or-border m-t-30">Se connecter</div>
 
           <!-- Formulaire Angular -->
           <form [formGroup]="loginForm" (ngSubmit)="login()" class="m-t-30">
@@ -50,12 +31,12 @@
               Le mot de passe doit contenir au moins 6 caractères.
             </div>
 
-            <div class="d-flex align-items-center m-b-12">
+            <!-- <div class="d-flex align-items-center m-b-12">
               <mat-checkbox color="primary">Se souvenir de moi</mat-checkbox>
               <a [routerLink]="['/']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">
                 Mot de passe oublié ?
               </a>
-            </div>
+            </div> -->
 
             <button mat-flat-button color="primary" class="w-100" type="submit" [disabled]="loginForm.invalid">
               Se connecter

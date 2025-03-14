@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { CategorieServiceService } from '../../services/categorie-service.service';
+import { CategorieServiceService } from '../../../services/categorie-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-categorie-service-list',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './categorie-service-list.component.html',
   styleUrl: './categorie-service-list.component.css'
 })
 export class CategorieServiceListComponent implements OnInit {
 
   newCategorie = { description: '' };
-
+  displayedColumns: string[] = ['description', 'actions'];
   categories: any[] = [];
 
-  // editingCategorie: any = null; // Stocke la catégorie en cours d'édition
-  // categorieDescription: string = ''; // Variable pour stocker la description
+  editedCategorie: any = null; 
 
   constructor(private categorieService: CategorieServiceService) { }
 
@@ -50,30 +49,26 @@ export class CategorieServiceListComponent implements OnInit {
     }
   }
 
-  trackByCategorie(index: number, categorie: any): string {
-    return categorie._id; // Retourne l'ID unique pour aider Angular à optimiser le rendu
+  editCategorie(categorie: any): void {
+    this.editedCategorie = { ...categorie }; // Cloner l'objet pour éviter la modification directe
   }
 
+  saveCategorie(): void {
+    if (this.editedCategorie) {
+      this.categorieService.updateCategorie(this.editedCategorie._id, this.editedCategorie).subscribe(updatedCategorie => {
+        // Mettre à jour la liste localement après modification
+        const index = this.categories.findIndex(s => s._id === updatedCategorie._id);
+        if (index !== -1) {
+          this.categories[index] = updatedCategorie;
+        }
+        this.editedCategorie = null; // Quitter le mode édition
+      });
+    }
+  }
 
-  // startEdit(categorie: any): void {
-  //   this.editingCategorie = { ...categorie };
-  //   this.categorieDescription = categorie.description; // Charger la description dans l'input
-  // }
-
-  // updateCategorie(): void {
-  //   if (this.editingCategorie) {
-  //     this.editingCategorie.description = this.categorieDescription;
-  //     this.categorieService.updateCategorie(this.editingCategorie._id, this.editingCategorie).subscribe(() => {
-  //       this.loadCategories();
-  //       this.cancelEdit(); // Réinitialiser après l'update
-  //     });
-  //   }
-  // }
-
-  // cancelEdit(): void {
-  //   this.editingCategorie = null;
-  //   this.categorieDescription = ''; // Réinitialiser l'input
-  // }
+  cancelEdit(): void {
+    this.editedCategorie = null; // Annuler l'édition
+  }
 
 
 }

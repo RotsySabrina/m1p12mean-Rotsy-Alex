@@ -14,41 +14,10 @@ export const navItems: NavItem[] = [
     divider: true
   },
   {
-    displayName: 'Badge',
-    iconName: 'solar:archive-minimalistic-line-duotone',
-    route: '/ui-components/badge',
-  },
-  {
-    displayName: 'Chips',
-    iconName: 'solar:danger-circle-line-duotone',
-    route: '/ui-components/chips',
-  },
-  {
-    displayName: 'Lists',
-    iconName: 'solar:bookmark-square-minimalistic-line-duotone',
-    route: '/ui-components/lists',
-  },
-  {
-    displayName: 'Menu',
-    iconName: 'solar:file-text-line-duotone',
-    route: '/ui-components/menu',
-  },
-  {
-    displayName: 'Tooltips',
-    iconName: 'solar:text-field-focus-line-duotone',
-    route: '/ui-components/tooltips',
-  },
-  {
-    displayName: 'Forms',
-    iconName: 'solar:file-text-line-duotone',
-    route: '/ui-components/forms',
-  },
-  {
-    displayName: 'Tables',
+    displayName: 'Catégorie',
     iconName: 'solar:tablet-line-duotone',
-    route: '/ui-components/tables',
+    route: '/ui-components/categorie_services',
   },
-
   {
     displayName: 'Services',
     iconName: 'solar:tablet-line-duotone',
