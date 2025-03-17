@@ -10,8 +10,7 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Nom</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="text" id="nom" name="nom" [(ngModel)]="newMecanicien.nom" required
-              placeholder="Nom" />
+            <input matInput type="text" name="nom" [(ngModel)]="newMecanicien.nom" required placeholder="Nom" />
           </mat-form-field>
         </div>
 
@@ -19,8 +18,7 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Prénom</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="text" id="prenom" name="prenom" [(ngModel)]="newMecanicien.prenom"
-              placeholder="Prénom" />
+            <input matInput type="text" name="prenom" [(ngModel)]="newMecanicien.prenom" placeholder="Prénom" />
           </mat-form-field>
         </div>
 
@@ -28,8 +26,7 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Email</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="email" id="email" name="email" [(ngModel)]="newMecanicien.email" required
-              placeholder="Email" />
+            <input matInput type="email" name="email" [(ngModel)]="newMecanicien.email" required placeholder="Email" />
           </mat-form-field>
         </div>
 
@@ -37,17 +34,16 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Mot de passe</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="password" id="mot_de_passe" name="mot_de_passe"
-              [(ngModel)]="newMecanicien.mot_de_passe" required placeholder="Mot de passe" />
+            <input matInput type="password" name="mot_de_passe" [(ngModel)]="newMecanicien.mot_de_passe" required
+              placeholder="Mot de passe" />
           </mat-form-field>
         </div>
 
-        <!-- Spécialisations (Multi-sélection) -->
+        <!-- Spécialisations -->
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Catégorie</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select id="specialisations" name="specialisations" [(ngModel)]="newMecanicien.specialisations" required
-              multiple> <!-- Ajout de `multiple` -->
+            <mat-select name="specialisations" [(ngModel)]="newMecanicien.specialisations" required multiple>
               <mat-option *ngFor="let categorie of categories" [value]="categorie._id">
                 {{ categorie.description }}
               </mat-option>
@@ -66,22 +62,68 @@
   </mat-card-content>
 </mat-card>
 
-<!-- <mat-card class="cardWithShadow">
+<mat-card class="cardWithShadow">
   <mat-card-content>
-    <mat-card-title>Liste des Services</mat-card-title>
+    <mat-card-title>Liste des Mécaniciens</mat-card-title>
 
     <div class="table-responsive">
-      <table mat-table [dataSource]="services" class="w-100">
+      <table mat-table [dataSource]="mecaniciens" class="w-100">
 
-        <ng-container matColumnDef="categorie">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Catégorie </th>
-          <td mat-cell *matCellDef="let service">
-            <ng-container *ngIf="editedService?._id !== service._id; else editCategorie">
-              <p>{{ service.id_categorie_service.description }}</p>
+        <!-- Nom -->
+        <ng-container matColumnDef="nom">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Nom</th>
+          <td mat-cell *matCellDef="let mecanicien">
+            <ng-container *ngIf="editedMecanicien?._id !== mecanicien._id; else editNom">
+              <p>{{ mecanicien.nom }}</p>
+            </ng-container>
+            <ng-template #editNom>
+              <mat-form-field appearance="outline" class="w-100">
+                <input matInput [(ngModel)]="editedMecanicien.nom" />
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Prénom -->
+        <ng-container matColumnDef="prenom">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Prénom</th>
+          <td mat-cell *matCellDef="let mecanicien">
+            <ng-container *ngIf="editedMecanicien?._id !== mecanicien._id; else editPrenom">
+              <p>{{ mecanicien.prenom }}</p>
+            </ng-container>
+            <ng-template #editPrenom>
+              <mat-form-field appearance="outline" class="w-100">
+                <input matInput [(ngModel)]="editedMecanicien.prenom" />
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Email -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Email</th>
+          <td mat-cell *matCellDef="let mecanicien">
+            <ng-container *ngIf="editedMecanicien?._id !== mecanicien._id; else editEmail">
+              <p>{{ mecanicien.email }}</p>
+            </ng-container>
+            <ng-template #editEmail>
+              <mat-form-field appearance="outline" class="w-100">
+                <input matInput type="email" [(ngModel)]="editedMecanicien.email" />
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Catégorie -->
+        <ng-container matColumnDef="specialisations">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Catégorie</th>
+          <td mat-cell *matCellDef="let mecanicien">
+            <ng-container *ngIf="editedMecanicien?._id !== mecanicien._id; else editCategorie">
+              <p>{{ mecanicien.specialisations.description}}</p>
             </ng-container>
             <ng-template #editCategorie>
               <mat-form-field appearance="outline" class="w-100">
-                <mat-select [(ngModel)]="editedService.id_categorie_service">
+                <mat-select [(ngModel)]="editedMecanicien.specialisations" multiple>
                   <mat-option *ngFor="let categorie of categories" [value]="categorie._id">
                     {{ categorie.description }}
                   </mat-option>
@@ -91,46 +133,16 @@
           </td>
         </ng-container>
 
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Description </th>
-          <td mat-cell *matCellDef="let service">
-            <ng-container *ngIf="editedService?._id !== service._id; else editDescription">
-              <p>{{ service.description }}</p>
-            </ng-container>
-            <ng-template #editDescription>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput [(ngModel)]="editedService.description" />
-              </mat-form-field>
-            </ng-template>
-          </td>
-        </ng-container>
-
-
-        <ng-container matColumnDef="cout">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Coût </th>
-          <td mat-cell *matCellDef="let service">
-            <ng-container *ngIf="editedService?._id !== service._id; else editCout">
-              <p>{{ service.cout }} Ar</p>
-            </ng-container>
-            <ng-template #editCout>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput type="number" [(ngModel)]="editedService.cout" />
-              </mat-form-field>
-            </ng-template>
-          </td>
-        </ng-container>
-
-
+        <!-- Actions -->
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
-          <td mat-cell *matCellDef="let service">
-            <ng-container *ngIf="editedService?._id !== service._id">
-              <button mat-button color="primary" (click)="editService(service)">Modifier</button>
-              <button mat-button color="warn" (click)="deleteService(service._id)">Supprimer</button>
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Actions</th>
+          <td mat-cell *matCellDef="let mecanicien">
+            <ng-container *ngIf="editedMecanicien?._id !== mecanicien._id">
+              <button mat-button color="primary" (click)="editMecanicien(mecanicien)">Modifier</button>
+              <button mat-button color="warn" (click)="deleteMecanicien(mecanicien._id)">Supprimer</button>
             </ng-container>
-            <ng-container *ngIf="editedService?._id === service._id">
-              <button mat-button color="primary" (click)="saveService()">Sauvegarder</button>
+            <ng-container *ngIf="editedMecanicien?._id === mecanicien._id">
+              <button mat-button color="primary" (click)="saveMecanicien()">Sauvegarder</button>
               <button mat-button color="warn" (click)="cancelEdit()">Annuler</button>
             </ng-container>
           </td>
@@ -141,4 +153,4 @@
       </table>
     </div>
   </mat-card-content>
-</mat-card> -->
+</mat-card>

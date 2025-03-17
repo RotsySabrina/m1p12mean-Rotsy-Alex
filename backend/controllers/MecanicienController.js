@@ -32,9 +32,9 @@ exports.addMecanicien = async (req, res) => {
         // Préparer les spécialisations
         const specialisationDocs = specialisations && specialisations.length > 0
             ? specialisations.map(spec => ({
-                  id_user: savedMecanicien._id,
-                  id_categorie_service: spec
-              }))
+                id_user: savedMecanicien._id,
+                id_categorie_service: spec
+            }))
             : [];
 
         // Effectuer l'insertion du mécanicien et des spécialisations en parallèle
@@ -46,6 +46,101 @@ exports.addMecanicien = async (req, res) => {
         await Promise.all([insertSpecialisations]);
 
         res.status(201).json({ message: "Mécanicien ajouté avec succès !" });
+
+    } catch (error) {
+        console.error("Erreur interne serveur:", error);
+        res.status(500).json({ message: "Erreur serveur", error });
+    }
+};
+
+// Récupérer tous les mécaniciens avec leurs spécialisations
+exports.getAllMecaniciens = async (req, res) => {
+    try {
+        // Récupérer les mécaniciens
+        const mecaniciens = await User.find({ role: "mecanicien" });
+
+        // Récupérer les spécialisations associées
+        const mecaniciensWithSpecialisations = await Promise.all(
+            mecaniciens.map(async (mecanicien) => {
+                const specialisations = await MecanicienSpecialiste.find({ id_user: mecanicien._id })
+                    .populate("id_categorie_service", "description"); // Récupère le nom de la spécialisation
+
+                return {
+                    ...mecanicien.toObject(),
+                    specialisations: specialisations.map(spec => ({
+                        id: spec._id,
+                        categorie_service: spec.id_categorie_service.nom // Nom de la spécialisation
+                    }))
+                };
+            })
+        );
+
+        res.status(200).json(mecaniciensWithSpecialisations);
+    } catch (error) {
+        console.error("Erreur interne serveur:", error);
+        res.status(500).json({ message: "Erreur serveur", error });
+    }
+};
+
+// Mettre à jour un mécanicien
+exports.updateMecanicien = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nom, prenom, email, mot_de_passe, specialisations } = req.body;
+
+        // Vérifier si le mécanicien existe
+        const mecanicien = await User.findById(id);
+        if (!mecanicien) {
+            return res.status(404).json({ message: "Mécanicien non trouvé." });
+        }
+
+        // Mettre à jour les informations du mécanicien
+        mecanicien.nom = nom || mecanicien.nom;
+        mecanicien.prenom = prenom || mecanicien.prenom;
+        mecanicien.email = email || mecanicien.email;
+
+        // Si un nouveau mot de passe est fourni, le hacher avant de l'enregistrer
+        if (mot_de_passe) {
+            const salt = await bcrypt.genSalt(10);
+            mecanicien.mot_de_passe = await bcrypt.hash(mot_de_passe, salt);
+        }
+
+        await mecanicien.save();
+
+        // Mettre à jour les spécialisations
+        if (specialisations) {
+            await MecanicienSpecialiste.deleteMany({ id_user: id }); // Supprimer les anciennes spécialités
+            const specialisationDocs = specialisations.map(spec => ({
+                id_user: id,
+                id_categorie_service: spec
+            }));
+            await MecanicienSpecialiste.insertMany(specialisationDocs);
+        }
+
+        res.status(200).json({ message: "Mécanicien mis à jour avec succès !" });
+
+    } catch (error) {
+        console.error("Erreur interne serveur:", error);
+        res.status(500).json({ message: "Erreur serveur", error });
+    }
+};
+
+// Supprimer un mécanicien
+exports.deleteMecanicien = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Vérifier si le mécanicien existe
+        const mecanicien = await User.findById(id);
+        if (!mecanicien) {
+            return res.status(404).json({ message: "Mécanicien non trouvé." });
+        }
+
+        // Supprimer le mécanicien et ses spécialisations
+        await User.findByIdAndDelete(id);
+        await MecanicienSpecialiste.deleteMany({ id_user: id });
+
+        res.status(200).json({ message: "Mécanicien supprimé avec succès !" });
 
     } catch (error) {
         console.error("Erreur interne serveur:", error);
