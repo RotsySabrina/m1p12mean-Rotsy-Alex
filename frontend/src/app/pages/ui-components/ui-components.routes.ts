@@ -1,46 +1,26 @@
 import { Routes } from '@angular/router';
 
 // ui
-import { AppBadgeComponent } from './badge/badge.component';
-import { AppChipsComponent } from './chips/chips.component';
-import { AppListsComponent } from './lists/lists.component';
-import { AppMenuComponent } from './menu/menu.component';
-import { AppTooltipsComponent } from './tooltips/tooltips.component';
-import { AppFormsComponent } from './forms/forms.component';
-import { AppTablesComponent } from './tables/tables.component';
 import { ServiceListComponent } from './service-list/service-list.component';
+import { CategorieServiceListComponent } from './categorie-service-list/categorie-service-list.component';
+import { VehiculeListComponent } from './vehicule-list/vehicule-list.component';
+import { MecanicienListComponent } from './mecanicien-list/mecanicien-list.component';
 
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
     children: [
       {
-        path: 'badge',
-        component: AppBadgeComponent,
+        path: 'mecaniciens',
+        component: MecanicienListComponent,
       },
       {
-        path: 'chips',
-        component: AppChipsComponent,
+        path: 'vehicules',
+        component: VehiculeListComponent,
       },
       {
-        path: 'lists',
-        component: AppListsComponent,
-      },
-      {
-        path: 'menu',
-        component: AppMenuComponent,
-      },
-      {
-        path: 'tooltips',
-        component: AppTooltipsComponent,
-      },
-      {
-        path: 'forms',
-        component: AppFormsComponent,
-      },
-      {
-        path: 'tables',
-        component: AppTablesComponent,
+        path: 'categorie_services',
+        component: CategorieServiceListComponent,
       },
       {
         path: 'services',

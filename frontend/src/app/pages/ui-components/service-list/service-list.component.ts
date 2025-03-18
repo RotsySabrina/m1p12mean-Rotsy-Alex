@@ -3,14 +3,8 @@ import { ServiceService } from '../../../services/service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CategorieServiceService } from '../../../services/categorie-service.service';
+import { MaterialModule } from 'src/app/material.module';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
@@ -18,13 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
+    MaterialModule
   ],
   templateUrl: './service-list.component.html',
   styleUrl: './service-list.component.css'
