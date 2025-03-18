@@ -5,7 +5,8 @@
         <mat-card-content class="p-32">
           <div class="text-center">
             <a [routerLink]="['/dashboard']">
-              <img src="./assets/images/logos/logo.svg" class="align-middle m-2" alt="logo" />
+              <img src="./assets/images/logos/logo.png" class="align-middle m-2" alt="logo" width="150" />
+
             </a>
           </div>
 
@@ -27,7 +28,8 @@
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <input matInput type="password" formControlName="mot_de_passe" placeholder="Entrez votre mot de passe" />
             </mat-form-field>
-            <div *ngIf="loginForm.controls['mot_de_passe'].invalid && loginForm.controls['mot_de_passe'].touched" class="text-danger">
+            <div *ngIf="loginForm.controls['mot_de_passe'].invalid && loginForm.controls['mot_de_passe'].touched"
+              class="text-danger">
               Le mot de passe doit contenir au moins 6 caractères.
             </div>
 
@@ -43,7 +45,7 @@
             </button>
           </form>
 
-          <span class="d-block f-w-500 text-center m-t-24">Nouveau sur MaterialM?
+          <span class="d-block f-w-500 text-center m-t-24">Nouveau sur Mechanical ?
             <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
               Créer un compte
             </a>

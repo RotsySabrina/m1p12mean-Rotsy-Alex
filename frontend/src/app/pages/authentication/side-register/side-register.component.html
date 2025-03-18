@@ -5,7 +5,7 @@
         <mat-card-content class="p-32">
           <div class="text-center">
             <a [routerLink]="['/dashboard']">
-              <img src="./assets/images/logos/logo.svg" class="align-middle m-2" alt="logo" />
+              <img src="./assets/images/logos/logo.png" class="align-middle m-2" alt="logo" width="150" />
             </a>
           </div>
 
@@ -50,17 +50,8 @@
             </mat-form-field>
 
             <!-- Rôle -->
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <mat-label>Rôle</mat-label>
-              <mat-select formControlName="role">
-                <mat-option value="client">Client</mat-option>
-                <mat-option value="mecanicien">Mécanicien</mat-option>
-                <!-- <mat-option value="manager">Manager</mat-option> -->
-              </mat-select>
-              <mat-error *ngIf="f.role?.invalid && f.role?.touched">
-                Veuillez choisir un rôle
-              </mat-error>
-            </mat-form-field>
+            <input type="hidden" formControlName="role" value="client">
+
 
             <!-- Bouton d'inscription -->
             <button mat-flat-button color="primary" class="w-100" type="submit" [disabled]="form.invalid">

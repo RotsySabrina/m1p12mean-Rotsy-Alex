@@ -1,166 +1,119 @@
 <mat-card class="cardWithShadow theme-card">
-    <mat-card-header>
-        <mat-card-title class="m-b-0">Ajouter un Rendez-vous</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="b-t-1">
-        <form (ngSubmit)="addRendezVousClient()" #rendezVousForm="ngForm">
-            <div class="row d-flex align-items-center gap-3">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">Prendre un Rendez-vous</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1">
+    <form (ngSubmit)="addRendezVousClient()" #rendezVousForm="ngForm">
+      <div class="row d-flex align-items-center gap-3">
+        <!-- Véhicule -->
+        <div class="col">
+          <mat-label class="f-w-600 m-b-8 d-block">Véhicule</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-select id="id_vehicule" name="id_vehicule" [(ngModel)]="newRendezVousClient.id_vehicule" required>
+              <mat-option value="" disabled selected>Sélectionner un véhicule</mat-option>
+              <mat-option *ngFor="let vehicule of vehicules" [value]="vehicule._id">
+                {{ vehicule.marque }} - {{ vehicule.modele }} ({{ vehicule.immatriculation }})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-                <!-- Sélection du véhicule -->
-                <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Véhicule</mat-label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-select id="id_vehicule" name="id_vehicule" [(ngModel)]="newRendezVousClient.id_vehicule"
-                            required>
-                            <mat-option value="" disabled selected>Sélectionner un véhicule</mat-option>
-                            <mat-option *ngFor="let vehicule of vehicules" [value]="vehicule._id">
-                                {{ vehicule.marque }} - {{ vehicule.modele }} ({{ vehicule.immatriculation }})
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
+        <!-- Services -->
+        <div class="col">
+          <mat-label class="f-w-600 m-b-8 d-block">Services</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-select id="services" name="services" multiple [(ngModel)]="newRendezVousClient.services" required>
+              <mat-option *ngFor="let service of services" [value]="service._id">
+                {{ service.description }} ({{ service.cout }} Ar)
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-                <!-- Sélection des services -->
-                <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Services demandés</mat-label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-select id="id_service" name="id_service" [(ngModel)]="newRendezVousClient.id_service"
-                            multiple required>
-                            <mat-option *ngFor="let service of services" [value]="service._id">
-                                {{ service.description }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
+        <!-- Date et Heure -->
+        <div class="col">
+          <mat-label class="f-w-600 m-b-8 d-block">Date & Heure</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="datetime-local" id="date_heure" name="date_heure"
+              [(ngModel)]="newRendezVousClient.date_heure" required />
+          </mat-form-field>
+        </div>
 
-                <!-- Sélection de la date et heure -->
-                <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Date et Heure</mat-label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput [matDatepicker]="picker" id="date_heure" name="date_heure"
-                            [(ngModel)]="newRendezVousClient.date_heure" required placeholder="Sélectionner une date">
-                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
-                </div>
+        <!-- Problème spécifique -->
+        <div class="col">
+          <mat-label class="f-w-600 m-b-8 d-block">Problème Spécifique</mat-label>
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="text" id="probleme_specifique" name="probleme_specifique"
+              [(ngModel)]="newRendezVousClient.probleme_specifique" required placeholder="Décrivez le problème..." />
+          </mat-form-field>
+        </div>
+      </div>
 
-                <!-- Description du problème -->
-                <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Problème Spécifique</mat-label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <textarea matInput id="probleme_specifique" name="probleme_specifique"
-                            [(ngModel)]="newRendezVousClient.probleme_specifique" required
-                            placeholder="Décrire le problème rencontré"></textarea>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <!-- Boutons d'action -->
-            <div class="m-t-12 d-flex justify-content-end gap-3">
-                <button mat-flat-button color="primary" type="submit"
-                    [disabled]="rendezVousForm.invalid">Ajouter</button>
-                <button mat-stroked-button color="warn" type="reset">Annuler</button>
-            </div>
-        </form>
-    </mat-card-content>
+      <div class="m-t-12 d-flex justify-content-end gap-3">
+        <button mat-flat-button color="primary" type="submit" [disabled]="rendezVousForm.invalid">Prendre RDV</button>
+        <button mat-stroked-button color="warn" type="reset">Annuler</button>
+      </div>
+    </form>
+  </mat-card-content>
 </mat-card>
 
+<!-- Liste des Rendez-vous -->
 <mat-card class="cardWithShadow">
-    <mat-card-content>
-      <mat-card-title>Liste des Rendez-vous</mat-card-title>
-  
-      <div class="table-responsive">
-        <table mat-table [dataSource]="rendez_vous_client" class="w-100">
-          
-          <!-- Véhicule -->
-          <ng-container matColumnDef="vehicule">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Véhicule </th>
-            <td mat-cell *matCellDef="let rdv">
-              <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id; else editVehicule">
-                <p>{{ rdv.id_vehicule.marque }} - {{ rdv.id_vehicule.modele }} ({{ rdv.id_vehicule.immatriculation }})</p>
-              </ng-container>
-              <ng-template #editVehicule>
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-select [(ngModel)]="editedRendezVousClient.id_vehicule">
-                    <mat-option *ngFor="let vehicule of vehicules" [value]="vehicule._id">
-                      {{ vehicule.marque }} - {{ vehicule.modele }} ({{ vehicule.immatriculation }})
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </ng-template>
-            </td>
-          </ng-container>
-  
-          <!-- Services -->
-          <ng-container matColumnDef="services">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Services demandés </th>
-            <td mat-cell *matCellDef="let rdv">
-              <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id; else editServices">
-                <p>{{ getServices(rdv.id_service) }}</p>
-              </ng-container>
-              <ng-template #editServices>
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-select [(ngModel)]="editedRendezVousClient.id_service" multiple>
-                    <mat-option *ngFor="let service of services" [value]="service._id">
-                      {{ service.description }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </ng-template>
-            </td>
-          </ng-container>
-  
-          <!-- Date et Heure -->
-          <ng-container matColumnDef="date_heure">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Date et Heure </th>
-            <td mat-cell *matCellDef="let rdv">
-              <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id; else editDate">
-                <p>{{ rdv.date_heure | date: 'dd/MM/yyyy HH:mm' }}</p>
-              </ng-container>
-              <ng-template #editDate>
-                <mat-form-field appearance="outline" class="w-100">
-                  <input matInput [matDatepicker]="picker" [(ngModel)]="editedRendezVousClient.date_heure">
-                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-              </ng-template>
-            </td>
-          </ng-container>
-  
-          <!-- Problème spécifique -->
-          <ng-container matColumnDef="probleme">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Problème Spécifique </th>
-            <td mat-cell *matCellDef="let rdv">
-              <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id; else editProbleme">
-                <p>{{ rdv.probleme_specifique }}</p>
-              </ng-container>
-              <ng-template #editProbleme>
-                <mat-form-field appearance="outline" class="w-100">
-                  <textarea matInput [(ngModel)]="editedRendezVousClient.probleme_specifique"></textarea>
-                </mat-form-field>
-              </ng-template>
-            </td>
-          </ng-container>
-  
-          <!-- Actions -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
-            <td mat-cell *matCellDef="let rdv">
-              <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id">
-                <button mat-button color="primary" (click)="editRendezVous(rdv)">Modifier</button>
-                <button mat-button color="warn" (click)="deleteRendezVous(rdv._id)">Supprimer</button>
-              </ng-container>
-              <ng-container *ngIf="editedRendezVousClient?._id === rdv._id">
-                <button mat-button color="primary" (click)="saveRendezVousClient()">Sauvegarder</button>
-                <button mat-button color="warn" (click)="cancelEdit()">Annuler</button>
-              </ng-container>
-            </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-    </mat-card-content>
-  </mat-card>
-  
+  <mat-card-content>
+    <mat-card-title>Liste des Rendez-vous</mat-card-title>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="rendez_vous_client" class="w-100">
+        <!-- Véhicule -->
+        <ng-container matColumnDef="vehicule">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Véhicule </th>
+          <td mat-cell *matCellDef="let rdv">
+            <p>{{ rdv.id_vehicule.marque }} - {{ rdv.id_vehicule.modele }} ({{ rdv.id_vehicule.immatriculation }})</p>
+          </td>
+        </ng-container>
+
+        <!-- Services -->
+        <ng-container matColumnDef="services">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Services </th>
+          <td mat-cell *matCellDef="let rdv">
+            <p *ngFor="let service of rdv.services">{{ service.description }} ({{ service.cout }} Ar)</p>
+          </td>
+        </ng-container>
+
+        <!-- Date & Heure -->
+        <ng-container matColumnDef="date_heure">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Date & Heure </th>
+          <td mat-cell *matCellDef="let rdv">
+            <p>{{ rdv.date_heure | date:'dd/MM/yyyy HH:mm' }}</p>
+          </td>
+        </ng-container>
+
+        <!-- Problème Spécifique -->
+        <ng-container matColumnDef="probleme">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Problème Spécifique </th>
+          <td mat-cell *matCellDef="let rdv">
+            <p>{{ rdv.probleme_specifique }}</p>
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
+          <td mat-cell *matCellDef="let rdv">
+            <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id">
+              <button mat-button color="primary" (click)="editRendezVous(rdv)">Modifier</button>
+              <button mat-button color="warn" (click)="deleteRendezVous(rdv._id)">Annuler</button>
+            </ng-container>
+            <ng-container *ngIf="editedRendezVousClient?._id === rdv._id">
+              <button mat-button color="primary" (click)="saveRendezVousClient()">Sauvegarder</button>
+              <button mat-button color="warn" (click)="cancelEdit()">Annuler</button>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>
