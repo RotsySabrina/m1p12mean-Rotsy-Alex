@@ -11,4 +11,11 @@ module.exports = (req, res, next) =>{
     } catch (error) {
         res.status(400).json({ message: "Token invalide" });
     }
+};
+
+exports.isManager = (req, res, next)=>{
+    if(req.user.role !== "manager"){
+        return res.status(403).json({ message: "Accès interdit. Seuls les managers peuvent effectuer cette action." });
+    }
+    next();
 }

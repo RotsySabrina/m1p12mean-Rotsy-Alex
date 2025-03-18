@@ -1,50 +1,49 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousService = require("../models/RendezVousService");
+const mongoose = require("mongoose");
 
 // Créer un rendez-vous
-exports.createRendezVous = async (req, res) => {
-    try {
-        const { id_vehicule, date_heure, probleme_specifique } = req.body;
+exports.createRendezVousWithServices = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
+    try {
+        const { id_vehicule, date_heure, probleme_specifique, services } = req.body;
         const newRdv = new RendezVousClient({
-            id_user: req.user.id, 
+            id_user: req.user.id,
             id_vehicule,
             date_heure,
             probleme_specifique,
             status: "en attente"
         });
 
-        await newRdv.save();
-        res.status(201).json({ message: "Rendez-vous créé avec succès", newRdv });
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur", error });
-    }
-};
+        const savedRdv = await newRdv.save({ session });
+        console.log("Rendez-vous créé:", savedRdv);  
 
-//rendez vous avec services
-exports.createRendezVousWithServices = async (req, res) =>{
-    try {
-        const {id_vehicule, date_heure, probleme_specifique, services} = req.body;
-        req.user = { id: req.user.id || req.body.id_user };
-        await exports.createRendezVous(req, res);
-
-        const rendezVous = await RendezVousClient.findone({id_user: req.user.id}).sort({date_heure: -1});
-        if (!rendezVous) {
-            return res.status(400).json({ message: "Impossible de récupérer le rendez-vous" });
-        }
-
-        if(services && services.length > 0){
-            const servicesAssocies = services.map(serviceId =>({
-                id_rendez_vous_client: rendezVous._id,
-                id_service: serviceId,
+        if (services && services.length > 0) {
+            const servicesAssocies = services.map(serviceId => ({
+                id_rendez_vous_client: savedRdv._id,
+                id_service: serviceId
             }));
-        await RendezVousService.insertMany(servicesAssocies);
+
+            await RendezVousService.insertMany(servicesAssocies, { session });
+            console.log("Services associés ajoutés:", servicesAssocies);  // Debug
         }
-        res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", rendezVous });
+
+        await session.commitTransaction();
+        session.endSession();
+        
+        res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
+
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
+        console.error("Erreur lors de la création du rendez-vous ou des services:", error);  // Debug
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
+
 
 //Modifier un rendez-vous
 exports.updateRendezVous = async (req, res) => {
