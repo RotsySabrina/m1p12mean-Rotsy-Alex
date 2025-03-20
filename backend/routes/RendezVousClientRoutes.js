@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
     createRendezVousWithCategorieServices,
-    getRendezVousByClientWithServices,
+    getRendezVousByClientWithCategorieServices,
     calculerDevis,
     updateRendezVous,
     cancelRendezVous,
@@ -11,7 +11,7 @@ const {
 const authMiddleware = require("../middleware/AuthMiddleware");
 
 router.post('/',authMiddleware,createRendezVousWithCategorieServices);
-router.get('/',authMiddleware,getRendezVousByClientWithServices);
+router.get('/',authMiddleware,getRendezVousByClientWithCategorieServices);
 router.post('/devis',authMiddleware,calculerDevis);
 
 // router.put("/:id", authMiddleware, updateRendezVous);

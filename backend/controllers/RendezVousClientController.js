@@ -1,17 +1,29 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousService = require("../models/RendezVousService");
 const RendezVousCategorieService = require("../models/RendezVousCategorieService");
+const CategorieService = require("../models/CategorieService");
 const Service = require("../models/Service");
 
 const mongoose = require("mongoose");
 
-// Créer un rendez-vous
 exports.createRendezVousWithCategorieServices = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const { id_vehicule, date_heure, duree_totale, catServices } = req.body;
+        const { id_vehicule, date_heure, catServices } = req.body;
+
+        if (!id_vehicule || !date_heure || !catServices || catServices.length === 0) {
+            return res.status(400).json({ message: "id_vehicule, date_heure et catServices sont requis" });
+        }
+
+        const services = await CategorieService.find({ _id: { $in: catServices } });
+        if (services.length !== catServices.length) {
+            return res.status(400).json({ message: "Un ou plusieurs services sélectionnés n'existent pas" });
+        }
+
+        let duree_totale = services.reduce((sum, service) => sum + service.duree, 0);
+
         const newRdv = new RendezVousClient({
             id_user: req.user.id,
             id_vehicule,
@@ -20,35 +32,27 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
         });
 
         const savedRdv = await newRdv.save({ session });
-        console.log("Rendez-vous créé:", savedRdv);  
-        console.log("categorie services:", catServices); 
-        if (catServices && catServices.length > 0) {
-            const catServicesAssocies = catServices.map(serviceId => ({
-                id_rendez_vous_client: savedRdv._id,
-                id_categorie_service: serviceId
-            }));
-            console.log("catServicesAssocies:", catServicesAssocies); 
 
-            await RendezVousCategorieService.insertMany(catServicesAssocies, { session });
-             
-            
-        }
+        const catServicesAssocies = services.map(service => ({
+            id_rendez_vous_client: savedRdv._id,
+            id_categorie_service: service._id
+        }));
+
+        await RendezVousCategorieService.insertMany(catServicesAssocies, { session });
 
         await session.commitTransaction();
         session.endSession();
-        
-        res.status(201).json({ message: "Rendez-vous et catServices ajoutés avec succès", savedRdv });
+
+        res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
 
-// rendez-vous d'un client avec catServices associés
-exports.getRendezVousByClientWithServices = async (req, res) => {
+exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
     try {
         const id_user = req.user.id; 
 
@@ -61,15 +65,15 @@ exports.getRendezVousByClientWithServices = async (req, res) => {
         }
 
         for (let rdv of rendezVous) {
-            const servicesAssocies = await RendezVousService.find({ id_rendez_vous_client: rdv._id })
-                .populate("id_service") 
+            const servicesAssocies = await RendezVousCategorieService.find({ id_rendez_vous_client: rdv._id })
+                .populate("id_categorie_service") 
                 .lean();
 
             if (!servicesAssocies.length) {
-                rdv.services = [];
+                rdv.CategorieServices = [];
                 continue;
             }
-            rdv.services = servicesAssocies.map(s => s.id_service);
+            rdv.CategorieServices = servicesAssocies.map(s => s.id_categorie_service);
         }
         res.status(200).json({ rendezVous });
     } catch (error) {
