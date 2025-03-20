@@ -14,6 +14,11 @@ export const navItems: NavItem[] = [
     divider: true
   },
   {
+    displayName: 'Créneaux',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/creneaux',
+  },
+  {
     displayName: 'Rendez-vous client',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/rendez_vous_client',

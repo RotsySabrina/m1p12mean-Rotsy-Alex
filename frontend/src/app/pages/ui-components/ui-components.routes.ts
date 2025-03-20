@@ -6,11 +6,16 @@ import { CategorieServiceListComponent } from './categorie-service-list/categori
 import { VehiculeListComponent } from './vehicule-list/vehicule-list.component';
 import { MecanicienListComponent } from './mecanicien-list/mecanicien-list.component';
 import { RendezVousClientComponent } from './rendez-vous-client/rendez-vous-client.component';
+import { CreneauxListComponent } from './creneaux-list/creneaux-list.component';
 
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'creneaux',
+        component: CreneauxListComponent,
+      },
       {
         path: 'rendez_vous_client',
         component: RendezVousClientComponent,
