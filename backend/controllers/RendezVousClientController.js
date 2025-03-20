@@ -1,48 +1,111 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousService = require("../models/RendezVousService");
+const RendezVousCategorieService = require("../models/RendezVousCategorieService");
+const Service = require("../models/Service");
+
 const mongoose = require("mongoose");
 
 // Créer un rendez-vous
-exports.createRendezVousWithServices = async (req, res) => {
+exports.createRendezVousWithCategorieServices = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const { id_vehicule, date_heure, probleme_specifique, services } = req.body;
+        const { id_vehicule, date_heure, duree_totale, catServices } = req.body;
         const newRdv = new RendezVousClient({
             id_user: req.user.id,
             id_vehicule,
             date_heure,
-            probleme_specifique,
-            status: "en attente"
+            duree_totale
         });
 
         const savedRdv = await newRdv.save({ session });
         console.log("Rendez-vous créé:", savedRdv);  
-
-        if (services && services.length > 0) {
-            const servicesAssocies = services.map(serviceId => ({
+        console.log("categorie services:", catServices); 
+        if (catServices && catServices.length > 0) {
+            const catServicesAssocies = catServices.map(serviceId => ({
                 id_rendez_vous_client: savedRdv._id,
-                id_service: serviceId
+                id_categorie_service: serviceId
             }));
+            console.log("catServicesAssocies:", catServicesAssocies); 
 
-            await RendezVousService.insertMany(servicesAssocies, { session });
-            console.log("Services associés ajoutés:", servicesAssocies);  // Debug
+            await RendezVousCategorieService.insertMany(catServicesAssocies, { session });
+             
+            
         }
 
         await session.commitTransaction();
         session.endSession();
         
-        res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
+        res.status(201).json({ message: "Rendez-vous et catServices ajoutés avec succès", savedRdv });
 
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
 
-        console.error("Erreur lors de la création du rendez-vous ou des services:", error);  // Debug
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
+
+// rendez-vous d'un client avec catServices associés
+exports.getRendezVousByClientWithServices = async (req, res) => {
+    try {
+        const id_user = req.user.id; 
+
+        const rendezVous = await RendezVousClient.find({ id_user })
+            .sort({ date_heure: -1 })
+            .lean();
+
+        if (!rendezVous.length) {
+            return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce client." });
+        }
+
+        for (let rdv of rendezVous) {
+            const servicesAssocies = await RendezVousService.find({ id_rendez_vous_client: rdv._id })
+                .populate("id_service") 
+                .lean();
+
+            if (!servicesAssocies.length) {
+                rdv.services = [];
+                continue;
+            }
+            rdv.services = servicesAssocies.map(s => s.id_service);
+        }
+        res.status(200).json({ rendezVous });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la récupération des rendez-vous", error: error.message || error });
+    }
+};
+
+exports.calculerDevis = async (req, res) => {
+    try {
+        const { services } = req.body;
+
+        console.log("Services sélectionnés pour le devis:", services);
+
+        if (!services || services.length === 0) {
+            return res.status(400).json({ message: "Aucun service sélectionné." });
+        }
+
+        const serviceDetails = await Service.find({ _id: { $in: services } });
+
+        console.log("Détails des services trouvés:", serviceDetails);
+
+        if (!serviceDetails.length) {
+            return res.status(404).json({ message: "Aucun service trouvé." });
+        }
+
+        const total = serviceDetails.reduce((acc, service) => acc + service.cout, 0);
+
+        console.log("Total du devis:", total);
+
+        res.status(200).json({ total, services: serviceDetails });
+    } catch (error) {
+        console.error("Erreur lors du calcul du devis:", error);
+        res.status(500).json({ message: "Erreur lors du calcul du devis", error });
+    }
+};
+
 
 
 //Modifier un rendez-vous

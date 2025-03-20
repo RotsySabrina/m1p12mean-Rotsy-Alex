@@ -30,6 +30,7 @@ app.use("/api/mecaniciens", require("./routes/MecanicienRoutes"));
 
 app.use('/categorie_services', require('./routes/CategorieServiceRoutes'));
 app.use('/services', require('./routes/ServiceRoutes'));
+app.use("/api/creneaux", require("./routes/CreneauxRoutes"));
 
 
 
