@@ -6,13 +6,15 @@ const {
     calculerDevis,
     updateRendezVous,
     cancelRendezVous,
-    getRendezVousByClient
+    getRendezVousByClient, getStatistiques
 } = require("../controllers/RendezVousClientController");
 const authMiddleware = require("../middleware/AuthMiddleware");
 
-router.post('/',authMiddleware,createRendezVousWithCategorieServices);
-router.get('/',authMiddleware,getRendezVousByClientWithCategorieServices);
-router.post('/devis',authMiddleware,calculerDevis);
+router.post('/', authMiddleware, createRendezVousWithCategorieServices);
+router.get('/', authMiddleware, getRendezVousByClientWithCategorieServices);
+router.post('/devis', authMiddleware, calculerDevis);
+router.get("/statistiques", authMiddleware, getStatistiques);
+
 
 // router.put("/:id", authMiddleware, updateRendezVous);
 // router.put("/:id/cancel", authMiddleware, cancelRendezVous);

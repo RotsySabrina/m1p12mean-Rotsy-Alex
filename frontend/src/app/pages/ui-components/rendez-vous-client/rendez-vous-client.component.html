@@ -60,7 +60,12 @@
 <!-- Liste des Rendez-vous -->
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <mat-card-title>Liste des Rendez-vous</mat-card-title>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <mat-card-title>Liste des Rendez-vous</mat-card-title>
+      <button mat-raised-button color="primary" href="rendez-vous-client-stat.component.html">
+        Voir les statistiques
+      </button>
+    </div>
 
     <div class="table-responsive">
       <table mat-table [dataSource]="rendez_vous_client" class="w-100">
@@ -117,3 +122,29 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<div class="statistiques-container">
+  <h3>Statistiques des Rendez-vous</h3>
+
+  <!-- Sélection du mois et de l'année -->
+  <div class="filters">
+    <label for="mois">Mois:</label>
+    <select id="mois" [(ngModel)]="moisSelectionne" (change)="loadStatistiques()">
+      <option *ngFor="let mois of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="mois">
+        {{ mois }}
+      </option>
+    </select>
+
+    <label for="annee">Année:</label>
+    <select id="annee" [(ngModel)]="anneeSelectionnee" (change)="loadStatistiques()">
+      <option *ngFor="let an of [2023,2024,2025,2026]" [value]="an">
+        {{ an }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Affichage des statistiques -->
+  <div class="stats">
+    <p><strong>Total des rendez-vous :</strong> {{ statistiques.totalRendezVous || 0 }}</p>
+  </div>
+</div>

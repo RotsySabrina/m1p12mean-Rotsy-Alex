@@ -39,4 +39,9 @@ export class RendezVousClientService {
   cancelRendezVous(id: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/cancel/${id}`, {});
   }
+
+  getStatistiques(mois: number, annee: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/statistiques?mois=${mois}&annee=${annee}`, { headers: this.getHeaders() });
+  }
+
 }

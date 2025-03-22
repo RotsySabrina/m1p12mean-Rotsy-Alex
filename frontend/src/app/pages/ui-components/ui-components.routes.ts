@@ -13,6 +13,10 @@ export const UiComponentsRoutes: Routes = [
     path: '',
     children: [
       {
+        path: 'statistiques',
+        component: CreneauxListComponent,
+      },
+      {
         path: 'creneaux',
         component: CreneauxListComponent,
       },

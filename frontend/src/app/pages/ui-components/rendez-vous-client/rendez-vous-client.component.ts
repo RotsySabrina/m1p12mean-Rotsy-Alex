@@ -22,8 +22,10 @@ export class RendezVousClientComponent implements OnInit {
   rendez_vous_client: any[] = [];
   services: any[] = [];
   vehicules: any[] = [];
+  statistiques: any = {}; // Stocke les statistiques
   displayedColumns: string[] = ['vehicule', 'services', 'date_heure', 'probleme', 'actions'];
-
+  moisSelectionne: number = new Date().getMonth() + 1; // Mois actuel
+  anneeSelectionnee: number = new Date().getFullYear(); // Année actuelle
   newRendezVousClient = {
     id_vehicule: '',
     date_heure: '',
@@ -43,6 +45,13 @@ export class RendezVousClientComponent implements OnInit {
     this.loadRendezVousClients();
     this.getServices();
     this.getVehicules();
+    this.loadStatistiques();
+  }
+
+  loadStatistiques(): void {
+    this.rendez_vous_clientService.getStatistiques(this.moisSelectionne, this.anneeSelectionnee).subscribe(
+      data => this.statistiques = data
+    );
   }
 
   loadRendezVousClients(): void {
@@ -63,12 +72,14 @@ export class RendezVousClientComponent implements OnInit {
     );
   }
 
+
   addRendezVousClient(): void {
     if (this.newRendezVousClient.id_vehicule && this.newRendezVousClient.date_heure &&
       this.newRendezVousClient.probleme_specifique && this.newRendezVousClient.services.length > 0) {
 
       this.rendez_vous_clientService.addRendezVousClient(this.newRendezVousClient).subscribe(() => {
         this.loadRendezVousClients();
+
         this.resetForm();
       });
     }
@@ -96,6 +107,7 @@ export class RendezVousClientComponent implements OnInit {
             this.rendez_vous_client[index] = updatedRendezVousClient;
           }
           this.editedRendezVousClient = null;
+
         });
     }
   }
@@ -106,7 +118,10 @@ export class RendezVousClientComponent implements OnInit {
 
   deleteRendezVous(id: string): void {
     if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
-      this.rendez_vous_clientService.cancelRendezVous(id).subscribe(() => this.loadRendezVousClients());
+      this.rendez_vous_clientService.cancelRendezVous(id).subscribe(() => {
+        this.loadRendezVousClients();
+
+      });
     }
   }
 }

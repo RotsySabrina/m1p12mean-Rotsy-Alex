@@ -54,7 +54,7 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
 
 exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
     try {
-        const id_user = req.user.id; 
+        const id_user = req.user.id;
 
         const rendezVous = await RendezVousClient.find({ id_user })
             .sort({ date_heure: -1 })
@@ -66,7 +66,7 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
 
         for (let rdv of rendezVous) {
             const servicesAssocies = await RendezVousCategorieService.find({ id_rendez_vous_client: rdv._id })
-                .populate("id_categorie_service") 
+                .populate("id_categorie_service")
                 .lean();
 
             if (!servicesAssocies.length) {
@@ -156,6 +156,35 @@ exports.getRendezVousByClient = async (req, res) => {
     try {
         const rdvs = await RendezVousClient.find({ id_user: req.user.id }).populate("id_vehicule");
         res.status(200).json(rdvs);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error });
+    }
+};
+
+exports.getStatistiques = async (req, res) => {
+    try {
+        const { mois, annee } = req.query;
+
+        // Convertir les valeurs en entiers
+        const month = parseInt(mois);
+        const year = parseInt(annee);
+
+        // Vérifier que les valeurs sont valides
+        if (isNaN(month) || isNaN(year)) {
+            return res.status(400).json({ message: "Mois et année requis" });
+        }
+
+        // Filtrer les rendez-vous par mois et année
+        const rendezVous = await RendezVousClient.find({
+            date_heure: {
+                $gte: new Date(year, month - 1, 1), // Début du mois
+                $lt: new Date(year, month, 1) // Fin du mois
+            }
+        });
+
+        res.status(200).json({
+            totalRendezVous: rendezVous.length,
+        });
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error });
     }
