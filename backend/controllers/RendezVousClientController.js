@@ -56,30 +56,43 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
     try {
         const id_user = req.user.id;
 
+        console.log("🔍 ID de l'utilisateur :", id_user);
+
         const rendezVous = await RendezVousClient.find({ id_user })
             .sort({ date_heure: -1 })
+            .populate("id_vehicule") // Récupérer les infos du véhicule
             .lean();
 
+        console.log("📅 Rendez-vous trouvés :", rendezVous.length);
         if (!rendezVous.length) {
             return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce client." });
         }
 
         for (let rdv of rendezVous) {
+            console.log(`➡️ Traitement du rendez-vous ID: ${rdv._id}`);
+
             const servicesAssocies = await RendezVousCategorieService.find({ id_rendez_vous_client: rdv._id })
                 .populate("id_categorie_service")
                 .lean();
+
+            console.log(`📌 Services associés au RDV ${rdv._id}:`, servicesAssocies.length);
 
             if (!servicesAssocies.length) {
                 rdv.CategorieServices = [];
                 continue;
             }
+
             rdv.CategorieServices = servicesAssocies.map(s => s.id_categorie_service);
         }
+
+        console.log("✅ Résultat final des rendez-vous :", JSON.stringify(rendezVous, null, 2));
         res.status(200).json({ rendezVous });
     } catch (error) {
+        console.error("❌ Erreur lors de la récupération des rendez-vous :", error);
         res.status(500).json({ message: "Erreur lors de la récupération des rendez-vous", error: error.message || error });
     }
 };
+
 
 exports.calculerDevis = async (req, res) => {
     try {

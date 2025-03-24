@@ -18,35 +18,41 @@
           </mat-form-field>
         </div>
 
-        <!-- Services -->
+        <!-- Categorie Services -->
         <div class="col">
-          <mat-label class="f-w-600 m-b-8 d-block">Services</mat-label>
+          <mat-label class="f-w-600 m-b-8 d-block">Catégorie Services</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select id="services" name="services" multiple [(ngModel)]="newRendezVousClient.services" required>
-              <mat-option *ngFor="let service of services" [value]="service._id">
-                {{ service.description }} ({{ service.cout }} Ar)
+            <mat-select id="categorie_services" name="categorie_services" multiple [(ngModel)]="newRendezVousClient.catServices" required>
+              <mat-option *ngFor="let categorie of categorie_services" [value]="categorie._id">
+                {{ categorie.description }}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Date et Heure -->
+        <!-- Date -->
         <div class="col">
-          <mat-label class="f-w-600 m-b-8 d-block">Date & Heure</mat-label>
+          <mat-label class="f-w-600 m-b-8 d-block">Date</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="datetime-local" id="date_heure" name="date_heure"
-              [(ngModel)]="newRendezVousClient.date_heure" required />
+            <input matInput [matDatepicker]="picker" id="date_heure" name="date_heure"
+              [(ngModel)]="selectedDate" (dateChange)="onDateChange()" required />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
 
-        <!-- Problème spécifique -->
-        <div class="col">
-          <mat-label class="f-w-600 m-b-8 d-block">Problème Spécifique</mat-label>
+        <!-- Créneaux disponibles -->
+        <div class="col" *ngIf="creneaux.length > 0">
+          <mat-label class="f-w-600 m-b-8 d-block">Créneaux disponibles</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput type="text" id="probleme_specifique" name="probleme_specifique"
-              [(ngModel)]="newRendezVousClient.probleme_specifique" required placeholder="Décrivez le problème..." />
+            <mat-select [(ngModel)]="selectedCreneau" name="creneau" (selectionChange)="combineDateAndCreneau($event.value)">
+              <mat-option *ngFor="let creneau of creneaux" [value]="creneau">
+                {{ creneau }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
+
       </div>
 
       <div class="m-t-12 d-flex justify-content-end gap-3">
@@ -73,15 +79,15 @@
         <ng-container matColumnDef="vehicule">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Véhicule </th>
           <td mat-cell *matCellDef="let rdv">
-            <p>{{ rdv.id_vehicule.marque }} - {{ rdv.id_vehicule.modele }} ({{ rdv.id_vehicule.immatriculation }})</p>
+            <p>{{ rdv.id_vehicule.marque}} - {{rdv.id_vehicule.modele}}({{rdv.id_vehicule.immatriculation}}) </p>
           </td>
         </ng-container>
 
-        <!-- Services -->
-        <ng-container matColumnDef="services">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Services </th>
+        <!-- categorie Services -->
+        <ng-container matColumnDef="categorieServices">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Catégorie Services </th>
           <td mat-cell *matCellDef="let rdv">
-            <p *ngFor="let service of rdv.services">{{ service.description }} ({{ service.cout }} Ar)</p>
+            <p *ngFor="let categ of rdv.CategorieServices">{{ categ.description }}</p>
           </td>
         </ng-container>
 
@@ -93,26 +99,19 @@
           </td>
         </ng-container>
 
-        <!-- Problème Spécifique -->
-        <ng-container matColumnDef="probleme">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Problème Spécifique </th>
+        <!-- Duree -->
+        <ng-container matColumnDef="duree">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Date & Heure </th>
           <td mat-cell *matCellDef="let rdv">
-            <p>{{ rdv.probleme_specifique }}</p>
+            <p>{{ rdv.duree_totale}} min</p>
           </td>
         </ng-container>
 
-        <!-- Actions -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Status </th>
           <td mat-cell *matCellDef="let rdv">
-            <ng-container *ngIf="editedRendezVousClient?._id !== rdv._id">
-              <button mat-button color="primary" (click)="editRendezVous(rdv)">Modifier</button>
-              <button mat-button color="warn" (click)="deleteRendezVous(rdv._id)">Annuler</button>
-            </ng-container>
-            <ng-container *ngIf="editedRendezVousClient?._id === rdv._id">
-              <button mat-button color="primary" (click)="saveRendezVousClient()">Sauvegarder</button>
-              <button mat-button color="warn" (click)="cancelEdit()">Annuler</button>
-            </ng-container>
+            <p>{{ rdv.status}}</p>
           </td>
         </ng-container>
 
