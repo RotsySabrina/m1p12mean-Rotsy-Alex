@@ -35,7 +35,7 @@
           <mat-label class="f-w-600 m-b-8 d-block">Date</mat-label>
           <mat-form-field appearance="outline" class="w-100">
             <input matInput [matDatepicker]="picker" id="date_heure" name="date_heure"
-              [(ngModel)]="selectedDate" (dateChange)="onDateChange()" required />
+              [(ngModel)]="selectedDate" (dateChange)="onDateChange()" required [disabled]="isDateDisabled" [min]="tomorrow"/>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -111,7 +111,17 @@
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Status </th>
           <td mat-cell *matCellDef="let rdv">
-            <p>{{ rdv.status}}</p>
+            <p [ngClass]="{
+                  'status-upcoming': getStatus(rdv) === 'A venir',
+                  'status-past': getStatus(rdv) === 'Déjà passé',
+                  'status-ongoing': getStatus(rdv) === 'En cours'
+                }">
+              <!-- Affichage du texte et symbole -->
+              <span *ngIf="getStatus(rdv) === 'A venir'"></span>
+              <span *ngIf="getStatus(rdv) === 'Déjà passé'"></span>
+              <span *ngIf="getStatus(rdv) === 'En cours'"></span>
+              {{ getStatus(rdv) }}
+            </p>
           </td>
         </ng-container>
 

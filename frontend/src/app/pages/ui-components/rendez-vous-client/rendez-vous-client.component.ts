@@ -6,6 +6,9 @@ import {CreneauxServiceService} from 'src/app/services/creneaux-service.service'
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
   selector: 'app-rendez-vous-client',
@@ -139,6 +142,34 @@ export class RendezVousClientComponent implements OnInit {
         this.resetForm();
       });
     }
+  }
+
+  // Statut
+  getStatus(rendez_vous_client: any): string {
+    const now = new Date();
+    const rdvDate = new Date(rendez_vous_client.date_heure);
+
+    if (rdvDate > now) {
+      return 'A venir';
+    } else if (rdvDate < now) {
+      return 'Déjà passé';
+    } else {
+      return 'En cours';  
+    }
+  }
+
+  get isDateDisabled(): boolean {
+    return this.newRendezVousClient.catServices.length === 0;
+  }
+
+  tomorrow: string = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0];
+
+  // Vérifier si la date sélectionnée est dans le futur
+  get isDateInvalid(): boolean {
+    if (!this.selectedDate) return false;
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); 
+    return new Date(this.selectedDate) < currentDate;
   }
 
   resetForm(): void {
