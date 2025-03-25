@@ -1,0 +1,109 @@
+<mat-card class="cardWithShadow theme-card">
+    <mat-card-header>
+        <mat-card-title class="m-b-0">Ajouter une disponibilité</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="b-t-1">
+        <form (ngSubmit)="addMecaDispo()" #mecaDispoForm="ngForm">
+            <div class="row d-flex align-items-center gap-3">
+
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Mécanicien</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-select name="id_user" [(ngModel)]="newMecaDispo.id_user" required>
+                            <mat-option *ngFor="let mecano of mecaniciens" [value]="mecano._id">{{ mecano.nom
+                                }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Date de début</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="date" name="date_debut" [(ngModel)]="newMecaDispo.date_debut" required />
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Date de fin</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput type="date" name="date_fin" [(ngModel)]="newMecaDispo.date_fin" required />
+                    </mat-form-field>
+                </div>
+
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block">Statut</mat-label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-select name="status" [(ngModel)]="newMecaDispo.status" required>
+                            <mat-option [value]="1">Disponible</mat-option>
+                            <mat-option [value]="0">Indisponible</mat-option>
+                            <mat-option [value]="5">En pause</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+            </div>
+
+            <!-- Boutons -->
+            <div class="m-t-12 d-flex justify-content-end gap-3">
+                <button mat-flat-button color="primary" type="submit"
+                    [disabled]="mecaDispoForm.invalid">Ajouter</button>
+                <button mat-stroked-button color="warn" type="reset"
+                    (click)="newMecaDispo = { id_user: '', date_debut: '', date_fin: '', status: '' }">Annuler</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <mat-card-title>Liste des Disponibilités</mat-card-title>
+
+        <div class="table-responsive">
+            <table mat-table [dataSource]="meca_dispos" class="w-100">
+
+                <!-- Mécanicien -->
+                <ng-container matColumnDef="id_user">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Mécanicien</th>
+                    <td mat-cell *matCellDef="let dispo"> {{ dispo.id_user }} </td>
+                </ng-container>
+
+                <!-- Date de début -->
+                <ng-container matColumnDef="date_debut">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Date de début</th>
+                    <td mat-cell *matCellDef="let dispo"> {{ dispo.date_debut | date:'dd/MM/yyyy' }} </td>
+                </ng-container>
+
+                <!-- Date de fin -->
+                <ng-container matColumnDef="date_fin">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Date de fin</th>
+                    <td mat-cell *matCellDef="let dispo"> {{ dispo.date_fin | date:'dd/MM/yyyy' }} </td>
+                </ng-container>
+
+                <!-- Statut -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Statut</th>
+                    <td mat-cell *matCellDef="let dispo">
+                        <mat-chip [color]="dispo.status === 1 ? 'primary' : dispo.status === 0 ? 'warn' : 'accent'">
+                            {{ dispo.status === 1 ? 'Disponible' : dispo.status === 0 ? 'Indisponible' : 'En pause'}}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Actions</th>
+                    <td mat-cell *matCellDef="let dispo">
+                        <button mat-icon-button color="warn" (click)="deleteArticle(dispo._id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['id_user', 'date_debut', 'date_fin', 'status', 'actions']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['id_user', 'date_debut', 'date_fin', 'status', 'actions'];">
+                </tr>
+            </table>
+        </div>
+    </mat-card-content>
+</mat-card>

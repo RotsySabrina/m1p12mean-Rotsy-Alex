@@ -7,11 +7,16 @@ import { VehiculeListComponent } from './vehicule-list/vehicule-list.component';
 import { MecanicienListComponent } from './mecanicien-list/mecanicien-list.component';
 import { RendezVousClientComponent } from './rendez-vous-client/rendez-vous-client.component';
 import { CreneauxListComponent } from './creneaux-list/creneaux-list.component';
+import { MecanicienDisponibleListComponent } from './mecanicien-disponible-list/mecanicien-disponible-list.component';
 
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'meca_dispo',
+        component: MecanicienDisponibleListComponent,
+      },
       {
         path: 'statistiques',
         component: CreneauxListComponent,

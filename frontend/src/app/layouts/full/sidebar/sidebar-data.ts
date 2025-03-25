@@ -14,6 +14,11 @@ export const navItems: NavItem[] = [
     divider: true
   },
   {
+    displayName: 'Mécanicien disponible',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/meca_dispo',
+  },
+  {
     displayName: 'Créneaux',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/creneaux',

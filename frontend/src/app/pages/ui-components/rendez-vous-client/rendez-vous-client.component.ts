@@ -120,7 +120,7 @@ export class RendezVousClientComponent implements OnInit {
     if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
       this.rendez_vous_clientService.cancelRendezVous(id).subscribe(() => {
         this.loadRendezVousClients();
-
+0
       });
     }
   }

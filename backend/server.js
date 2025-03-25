@@ -27,7 +27,7 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/vehicules", require("./routes/VehiculeRoutes"));
 app.use("/api/rendez_vous_client", require("./routes/RendezVousClientRoutes"));
 app.use("/api/mecaniciens", require("./routes/MecanicienRoutes"));
-
+app.use("/api/mecanicien_disponibles", require("./routes/MecanicienDisponibleRoutes"))
 app.use('/categorie_services', require('./routes/CategorieServiceRoutes'));
 app.use('/services', require('./routes/ServiceRoutes'));
 app.use("/api/creneaux", require("./routes/CreneauxRoutes"));
