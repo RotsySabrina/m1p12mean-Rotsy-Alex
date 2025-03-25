@@ -8,11 +8,16 @@ import { MecanicienListComponent } from './mecanicien-list/mecanicien-list.compo
 import { RendezVousClientComponent } from './rendez-vous-client/rendez-vous-client.component';
 import { CreneauxListComponent } from './creneaux-list/creneaux-list.component';
 import { MecanicienDisponibleListComponent } from './mecanicien-disponible-list/mecanicien-disponible-list.component';
+import { ManagerRdvComponent } from './manager-rdv/manager-rdv.component';
 
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'manager_rdv',
+        component: ManagerRdvComponent,
+      },
       {
         path: 'meca_dispo',
         component: MecanicienDisponibleListComponent,

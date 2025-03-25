@@ -69,7 +69,7 @@ exports.getAllMecaniciens = async (req, res) => {
                     ...mecanicien.toObject(),
                     specialisations: specialisations.map(spec => ({
                         id: spec._id,
-                        categorie_service: spec.id_categorie_service.nom // Nom de la spécialisation
+                        categorie_service: spec.id_categorie_service.description // Nom de la spécialisation
                     }))
                 };
             })
