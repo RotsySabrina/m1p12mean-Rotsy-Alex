@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CreneauxService } from 'src/app/services/creneaux.service';
+import { CreneauxService } from '../../../services/creneaux.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -16,7 +16,8 @@ import { MaterialModule } from 'src/app/material.module';
 export class CreneauxListComponent implements OnInit {
   creneaux: any[] = [];
 
-  displayColumns: string[] = ['heure ouverture', 'heure fermeture', 'pause début', 'pause fin', 'jours non travailles', 'actions']
+  displayColumns: string[] = ['heure_ouverture', 'heure_fermeture', 'pause_debut', 'pause_fin', 'jours_non_travailles', 'actions'];
+
   newCreneaux = { heure_ouverture: '', heure_fermeture: '', pause_debut: '', pause_fin: '', jours_non_travailles: '' }
   constructor(private creneauxService: CreneauxService) { }
   editedCreneau: any = null;

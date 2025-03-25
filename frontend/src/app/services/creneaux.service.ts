@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -14,16 +14,28 @@ export class CreneauxService {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    // console.log('🔍 Token récupéré depuis localStorage:', token);
+
+    if (!token) {
+      console.warn('⚠️ Aucun token trouvé dans localStorage');
+    }
+
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+
   getCreneaux(): Observable<any> {
-    return this.http.get(this.apiUrl);
+    return this.http.get(this.apiUrl, { headers: this.getHeaders() });
   }
 
   addCreneaux(creneaux: any): Observable<any> {
-    return this.http.post(this.apiUrl, creneaux);
+    return this.http.post(this.apiUrl, creneaux, { headers: this.getHeaders() });
   }
 
   updateCreneaux(id: string, creneaux: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, creneaux);
+    return this.http.put(`${this.apiUrl}/${id}`, creneaux, { headers: this.getHeaders() });
   }
 
 }
