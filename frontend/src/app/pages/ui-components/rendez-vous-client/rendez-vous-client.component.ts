@@ -6,9 +6,6 @@ import {CreneauxServiceService} from 'src/app/services/creneaux-service.service'
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-
 
 @Component({
   selector: 'app-rendez-vous-client',
