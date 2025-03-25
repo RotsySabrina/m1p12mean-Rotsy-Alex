@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const MecanicienSpecialiste = require("../models/MecanicienSpecialiste");
+const MecanicienSpecialiste = require("../models/MecanicienSpecialisation");
 
 exports.addMecanicien = async (req, res) => {
     try {

@@ -4,6 +4,7 @@ const CategorieService = require("../models/CategorieService");
 const Service = require("../models/Service");
 
 const mongoose = require("mongoose");
+const MecanicienSpecialisation = require("../models/MecanicienSpecialisation");
 
 exports.createRendezVousWithCategorieServices = async (req, res) => {
     try {
@@ -79,6 +80,36 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la récupération des rendez-vous", error: error.message || error });
     }
 };
+
+exports.updateRendezVousMecanicien = async (req, res) => {
+    try {
+        const { rendezVousId, mecanicienId } = req.body;
+
+        const rendezVous = await RendezVousClient.findById(rendezVousId);
+        if (!rendezVous) {
+            return res.status(404).json({ success: false, message: "Rendez-vous non trouvé" });
+        }
+
+        const mecanicien = await MecanicienSpecialisation.findById(mecanicienId);
+        if (!mecanicien) {
+            return res.status(404).json({ success: false, message: "Mécanicien non trouvé" });
+        }
+
+        rendezVous.mecanicien = mecanicienId;
+        await rendezVous.save();
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Mécanicien ajouté avec succès", 
+            data: rendezVous 
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du rendez-vous :", error);
+        return res.status(500).json({ success: false, message: "Erreur serveur", error });
+    }
+};
+
 
 
 exports.calculerDevis = async (req, res) => {
