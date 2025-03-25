@@ -1,14 +1,17 @@
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CreneauxServiceService {
-  private apiUrl = 'http://localhost:5000/api/creneaux/creneaux-dispo';
+  private apiUrl = `${environment.apiUrl}/api/creneaux/creneaux-dispo`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     // console.log('🔍 Token récupéré depuis localStorage:', token);
