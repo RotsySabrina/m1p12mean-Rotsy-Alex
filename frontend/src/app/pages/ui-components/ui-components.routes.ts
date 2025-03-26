@@ -9,11 +9,15 @@ import { RendezVousClientComponent } from './rendez-vous-client/rendez-vous-clie
 import { CreneauxListComponent } from './creneaux-list/creneaux-list.component';
 import { MecanicienDisponibleListComponent } from './mecanicien-disponible-list/mecanicien-disponible-list.component';
 import { ManagerRdvComponent } from './manager-rdv/manager-rdv.component';
-
+import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statistique-rendez-vous.component';
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'stat_rdv',
+        component: StatistiqueRendezVousComponent,
+      },
       {
         path: 'manager_rdv',
         component: ManagerRdvComponent,
