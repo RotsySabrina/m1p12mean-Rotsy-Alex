@@ -14,6 +14,11 @@ export const navItems: NavItem[] = [
     divider: true
   },
   {
+    displayName: 'Stat rendez-vous',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/stat_rdv',
+  },
+  {
     displayName: 'Assignation',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/manager_rdv',
