@@ -17,7 +17,7 @@ export class ManagerRdvComponent implements OnInit{
   mecaniciens: any[] = [];
   selectedMecanicien: { [key: string]: string } = {};
 
-  displayedColumns: string[] = ['client', 'date', 'mecanicien', 'actions'];
+  displayedColumns: string[] = ['date', 'duree', 'client', 'voiture','categorieServices','mecanicien', 'actions'];
 
   constructor(
     private managerRdvService: ManagerRdvService,
@@ -54,19 +54,19 @@ export class ManagerRdvComponent implements OnInit{
   }
 
   updateMecanicien(rdvId: string): void {
-    // const mecanicienId = this.selectedMecanicien[rdvId]; // Récupère l'ID du mécanicien sélectionné
-    // if (!mecanicienId) return;
-  
-    // this.managerRdvService.updateRendezVousMecanicien(rdvId, { mecanicienId }).subscribe(
-    //   response => {
-    //     console.log("Mécanicien ajouté avec succès :", response);
-    //     this.loadManagerRendezVous(); // Rafraîchir la liste après mise à jour
-    //   },
-    //   error => {
-    //     console.error("Erreur lors de l'ajout du mécanicien :", error);
-    //   }
-    // );
-  }
+    const mecanicienId = this.selectedMecanicien[rdvId];
+    if (!mecanicienId) return;
 
+    console.log(`Envoi de la requête pour RDV: ${rdvId} avec Mécanicien: ${mecanicienId}`);
 
+    this.managerRdvService.updateRendezVousMecanicien(rdvId, mecanicienId).subscribe(
+        response => {
+            console.log("Mécanicien ajouté avec succès :", response);
+            this.loadManagerRendezVous(); // Recharge la liste
+        },
+        error => {
+            console.error("Erreur lors de l'ajout du mécanicien :", error);
+        }
+    );
+}
 }
