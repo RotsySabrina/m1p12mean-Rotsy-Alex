@@ -3,6 +3,7 @@ export interface NavItem {
   divider?: boolean;
   iconName?: string;
   navCap?: string;
+  roles?: string[];
   route?: string;
   children?: NavItem[];
   chip?: boolean;
