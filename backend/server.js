@@ -31,7 +31,7 @@ app.use("/api/mecanicien_disponibles", require("./routes/MecanicienDisponibleRou
 app.use('/categorie_services', require('./routes/CategorieServiceRoutes'));
 app.use('/services', require('./routes/ServiceRoutes'));
 app.use("/api/creneaux", require("./routes/CreneauxRoutes"));
-
+app.use("/api/devis", require("./routes/DevisRoutes"));
 
 
 app.listen(PORT, () => { console.log(`Serveur en cours sur http://localhost:${PORT}`); });

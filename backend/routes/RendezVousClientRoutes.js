@@ -6,7 +6,6 @@ const {
     updateRendezVousMecanicien,
     getUpcomingRendezVous,
     getRendezVousMecanicien,
-    calculerDevis,
     updateRendezVous,
     cancelRendezVous,
     getRendezVousByClient, getStatistiques
@@ -18,7 +17,6 @@ router.get('/', authMiddleware, getRendezVousByClientWithCategorieServices);
 router.put("/ajout-meca",authMiddleware,updateRendezVousMecanicien);
 router.get("/rendez-vous-a-venir",authMiddleware,getUpcomingRendezVous);
 router.get("/rendez-vous-mecanicien",authMiddleware,getRendezVousMecanicien);
-router.post('/devis', authMiddleware, calculerDevis);
 router.get("/statistiques", authMiddleware, getStatistiques);
 
 

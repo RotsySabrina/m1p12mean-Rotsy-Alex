@@ -1,7 +1,6 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousCategorieService = require("../models/RendezVousCategorieService");
 const CategorieService = require("../models/CategorieService");
-const Service = require("../models/Service");
 
 const mongoose = require("mongoose");
 const User = require("../models/User");
@@ -190,38 +189,6 @@ exports.getRendezVousMecanicien = async (req, res) => {
             message: "Erreur serveur",
             error
         });
-    }
-};
-
-
-
-
-exports.calculerDevis = async (req, res) => {
-    try {
-        const { services } = req.body;
-
-        console.log("Services sélectionnés pour le devis:", services);
-
-        if (!services || services.length === 0) {
-            return res.status(400).json({ message: "Aucun service sélectionné." });
-        }
-
-        const serviceDetails = await Service.find({ _id: { $in: services } });
-
-        console.log("Détails des services trouvés:", serviceDetails);
-
-        if (!serviceDetails.length) {
-            return res.status(404).json({ message: "Aucun service trouvé." });
-        }
-
-        const total = serviceDetails.reduce((acc, service) => acc + service.cout, 0);
-
-        console.log("Total du devis:", total);
-
-        res.status(200).json({ total, services: serviceDetails });
-    } catch (error) {
-        console.error("Erreur lors du calcul du devis:", error);
-        res.status(500).json({ message: "Erreur lors du calcul du devis", error });
     }
 };
 
