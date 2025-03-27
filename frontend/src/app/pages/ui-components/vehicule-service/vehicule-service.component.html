@@ -8,10 +8,10 @@
                 <div class="col">
                     <mat-label class="f-w-600 m-b-8 d-block">Service</mat-label>
                     <mat-form-field appearance="outline" class="w-100">
-                        <mat-select id="id_service" name="id_service" required>
+                        <mat-select id="id_service" name="id_service" multiple required>
                             <mat-option value="" disabled selected>Sélectionner un Service</mat-option>
                             <mat-option *ngFor="let service of services" [value]="service._id">
-                                {{ service.description }}
+                                {{ service.id_categorie_service.description }} {{ service.description }} {{ service.cout }}ar
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
