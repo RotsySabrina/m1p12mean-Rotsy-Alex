@@ -33,6 +33,8 @@ export class SidebarComponent implements OnInit {
 
   // Vérifier si un élément peut être accessible par l'utilisateur
   canAccess(item: any): boolean {
-    return Array.isArray(item.roles) && item.roles.includes(this.userRole ?? ''); // Utilise this.userRole
+    return Array.isArray(item.roles) && item.roles.includes(this.userRole ?? '');
   }
+
+
 }

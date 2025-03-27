@@ -10,8 +10,9 @@
 <ul>
   <!-- Affiche uniquement les items autorisés -->
   <ng-container *ngFor="let item of filteredNavItems">
-    <li *ngIf="canAccess(item)">
+    <li>
       <a [routerLink]="item.route">{{ item.displayName }}</a>
     </li>
   </ng-container>
+
 </ul>

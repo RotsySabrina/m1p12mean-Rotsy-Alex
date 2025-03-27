@@ -12,6 +12,7 @@ import { ManagerRdvComponent } from './manager-rdv/manager-rdv.component';
 import { MecanicienRdvComponent } from './mecanicien-rdv/mecanicien-rdv.component';
 import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statistique-rendez-vous.component';
 import { RoleGuard } from '../../auth/role.guard';
+import { VehiculeServiceComponent } from './vehicule-service/vehicule-service.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -26,6 +27,10 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'mecanicien_rdv',
         component: MecanicienRdvComponent,
+      },
+      {
+        path: 'vehicule_service',
+        component: VehiculeServiceComponent,
       },
       {
         path: 'manager_rdv',
