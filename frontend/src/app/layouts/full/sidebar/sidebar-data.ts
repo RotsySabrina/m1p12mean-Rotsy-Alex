@@ -19,6 +19,11 @@ export const navItems: NavItem[] = [
     route: '/ui-components/stat_rdv',
   },
   {
+    displayName: 'Liste Rendez-vous',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/mecanicien_rdv',
+  },
+  {
     displayName: 'Assignation',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/manager_rdv',

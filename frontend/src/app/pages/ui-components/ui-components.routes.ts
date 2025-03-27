@@ -9,6 +9,7 @@ import { RendezVousClientComponent } from './rendez-vous-client/rendez-vous-clie
 import { CreneauxListComponent } from './creneaux-list/creneaux-list.component';
 import { MecanicienDisponibleListComponent } from './mecanicien-disponible-list/mecanicien-disponible-list.component';
 import { ManagerRdvComponent } from './manager-rdv/manager-rdv.component';
+import { MecanicienRdvComponent } from './mecanicien-rdv/mecanicien-rdv.component';
 import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statistique-rendez-vous.component';
 export const UiComponentsRoutes: Routes = [
   {
@@ -17,6 +18,10 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'stat_rdv',
         component: StatistiqueRendezVousComponent,
+      },
+      {
+        path: 'mecanicien_rdv',
+        component: MecanicienRdvComponent,
       },
       {
         path: 'manager_rdv',

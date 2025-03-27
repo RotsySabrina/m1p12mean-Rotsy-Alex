@@ -4,6 +4,8 @@ const {
     createRendezVousWithCategorieServices,
     getRendezVousByClientWithCategorieServices,
     updateRendezVousMecanicien,
+    getUpcomingRendezVous,
+    getRendezVousMecanicien,
     calculerDevis,
     updateRendezVous,
     cancelRendezVous,
@@ -14,6 +16,8 @@ const authMiddleware = require("../middleware/AuthMiddleware");
 router.post('/', authMiddleware, createRendezVousWithCategorieServices);
 router.get('/', authMiddleware, getRendezVousByClientWithCategorieServices);
 router.put("/ajout-meca",authMiddleware,updateRendezVousMecanicien);
+router.get("/rendez-vous-a-venir",authMiddleware,getUpcomingRendezVous);
+router.get("/rendez-vous-mecanicien",authMiddleware,getRendezVousMecanicien);
 router.post('/devis', authMiddleware, calculerDevis);
 router.get("/statistiques", authMiddleware, getStatistiques);
 

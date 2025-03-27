@@ -4,7 +4,7 @@ const CategorieService = require("../models/CategorieService");
 const Service = require("../models/Service");
 
 const mongoose = require("mongoose");
-const MecanicienSpecialisation = require("../models/MecanicienSpecialisation");
+const User = require("../models/User");
 
 exports.createRendezVousWithCategorieServices = async (req, res) => {
     try {
@@ -21,7 +21,6 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
 
         let duree_totale = services.reduce((sum, service) => sum + service.duree, 0);
 
-        // Création du rendez-vous
         const newRdv = new RendezVousClient({
             id_user: req.user.id,
             id_vehicule,
@@ -36,7 +35,7 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
             id_categorie_service: service._id
         }));
 
-        await RendezVousCategorieService.insertMany(catServicesAssocies); // Pas de session
+        await RendezVousCategorieService.insertMany(catServicesAssocies);
 
         res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
@@ -44,7 +43,6 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
-
 
 exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
     try {
@@ -55,7 +53,7 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
             .populate("id_vehicule")
             .lean();
 
-        console.log("📅 Rendez-vous trouvés :", rendezVous.length);
+        console.log("Rendez-vous trouvés :", rendezVous.length);
         if (!rendezVous.length) {
             return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce client." });
         }
@@ -73,29 +71,34 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
             rdv.CategorieServices = servicesAssocies.map(s => s.id_categorie_service);
         }
 
-        console.log("✅ Résultat final des rendez-vous :", JSON.stringify(rendezVous, null, 2));
+        console.log("Résultat final des rendez-vous :", JSON.stringify(rendezVous, null, 2));
         res.status(200).json({ rendezVous });
     } catch (error) {
-        console.error("❌ Erreur lors de la récupération des rendez-vous :", error);
+        console.error("Erreur lors de la récupération des rendez-vous :", error);
         res.status(500).json({ message: "Erreur lors de la récupération des rendez-vous", error: error.message || error });
     }
 };
 
 exports.updateRendezVousMecanicien = async (req, res) => {
     try {
+        console.log("Requête reçue :", req.body);
         const { rendezVousId, mecanicienId } = req.body;
 
         const rendezVous = await RendezVousClient.findById(rendezVousId);
+        console.log("rendezVous :", rendezVous);
+
         if (!rendezVous) {
             return res.status(404).json({ success: false, message: "Rendez-vous non trouvé" });
         }
 
-        const mecanicien = await MecanicienSpecialisation.findById(mecanicienId);
+        const mecanicien = await User.findById(mecanicienId);
+        console.log("mecanicien :", mecanicien);
+
         if (!mecanicien) {
             return res.status(404).json({ success: false, message: "Mécanicien non trouvé" });
         }
 
-        rendezVous.mecanicien = mecanicienId;
+        rendezVous.id_mecanicien = mecanicienId;
         await rendezVous.save();
 
         return res.status(200).json({ 
@@ -109,6 +112,87 @@ exports.updateRendezVousMecanicien = async (req, res) => {
         return res.status(500).json({ success: false, message: "Erreur serveur", error });
     }
 };
+
+exports.getUpcomingRendezVous = async (req, res) => {
+    try {
+        const now = new Date();
+
+        const upcomingRendezVous = await RendezVousClient.find({ date_heure: { $gte: now } })
+            .populate("id_user", "nom prenom email")
+            .populate("id_vehicule", "marque modele immatriculation annee")
+            .populate("id_mecanicien", "nom specialisation")
+            .sort({ date_heure: 1 });
+
+        const rendezVousIds = upcomingRendezVous.map(rdv => rdv._id);
+
+        const categories = await RendezVousCategorieService.find({ id_rendez_vous_client: { $in: rendezVousIds } })
+            .populate("id_categorie_service", "nom description");
+
+        const rendezVousAvecCategories = upcomingRendezVous.map(rdv => {
+            return {
+                ...rdv.toObject(),
+                categories: categories
+                    .filter(cat => cat.id_rendez_vous_client.toString() === rdv._id.toString())
+                    .map(cat => cat.id_categorie_service) // Ne garder que les infos de la catégorie
+            };
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Liste des rendez-vous à venir",
+            data: rendezVousAvecCategories
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération des rendez-vous à venir :", error);
+        return res.status(500).json({
+            success: false,
+            message: "Erreur serveur",
+            error
+        });
+    }
+};
+
+exports.getRendezVousMecanicien = async (req, res) => {
+    try {
+        const mecanicienId = req.user.id;
+
+        const now = new Date();
+        const rendezVous = await RendezVousClient.find({ 
+            id_mecanicien: mecanicienId, 
+            date_heure: { $gte: now } 
+        })
+        .populate("id_user", "nom prenom email")
+        .populate("id_vehicule", "marque modele immatriculation")
+        .sort({ date_heure: 1 });
+        
+        const rendezVousIds = rendezVous.map(rdv => rdv._id);
+        const categories = await RendezVousCategorieService.find({ id_rendez_vous_client: { $in: rendezVousIds } })
+            .populate("id_categorie_service", "nom description");
+
+        const rendezVousAvecCategories = rendezVous.map(rdv => ({
+            ...rdv.toObject(),
+            categories: categories
+                .filter(cat => cat.id_rendez_vous_client.toString() === rdv._id.toString())
+                .map(cat => cat.id_categorie_service) 
+        }));
+
+        return res.status(200).json({
+            success: true,
+            message: "Liste des rendez-vous à venir pour le mécanicien",
+            data: rendezVousAvecCategories
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération des rendez-vous du mécanicien :", error);
+        return res.status(500).json({
+            success: false,
+            message: "Erreur serveur",
+            error
+        });
+    }
+};
+
 
 
 
