@@ -11,6 +11,8 @@ import { MecanicienDisponibleListComponent } from './mecanicien-disponible-list/
 import { ManagerRdvComponent } from './manager-rdv/manager-rdv.component';
 import { MecanicienRdvComponent } from './mecanicien-rdv/mecanicien-rdv.component';
 import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statistique-rendez-vous.component';
+import { RoleGuard } from '../../auth/role.guard';
+
 export const UiComponentsRoutes: Routes = [
   {
     path: '',
@@ -18,6 +20,8 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'stat_rdv',
         component: StatistiqueRendezVousComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }  // Ici, seul un utilisateur avec le rôle 'manager' peut accéder à cette route
       },
       {
         path: 'mecanicien_rdv',
@@ -26,38 +30,48 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'manager_rdv',
         component: ManagerRdvComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }
       },
       {
         path: 'meca_dispo',
         component: MecanicienDisponibleListComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'mecanicien' }
       },
       {
         path: 'statistiques',
         component: CreneauxListComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }
       },
       {
         path: 'creneaux',
-        component: CreneauxListComponent,
+        component: CreneauxListComponent
       },
       {
         path: 'rendez_vous_client',
         component: RendezVousClientComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'client' }
       },
       {
         path: 'mecaniciens',
         component: MecanicienListComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }
       },
       {
         path: 'vehicules',
-        component: VehiculeListComponent,
+        component: VehiculeListComponent
       },
       {
         path: 'categorie_services',
-        component: CategorieServiceListComponent,
+        component: CategorieServiceListComponent
       },
       {
         path: 'services',
-        component: ServiceListComponent,
+        component: ServiceListComponent
       },
     ],
   },

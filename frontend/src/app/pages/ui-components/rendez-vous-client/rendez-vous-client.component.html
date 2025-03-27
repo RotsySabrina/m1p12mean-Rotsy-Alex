@@ -22,7 +22,8 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Catégorie Services</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select id="categorie_services" name="categorie_services" multiple [(ngModel)]="newRendezVousClient.catServices" required>
+            <mat-select id="categorie_services" name="categorie_services" multiple
+              [(ngModel)]="newRendezVousClient.catServices" required>
               <mat-option *ngFor="let categorie of categorie_services" [value]="categorie._id">
                 {{ categorie.description }}
               </mat-option>
@@ -34,8 +35,8 @@
         <div class="col">
           <mat-label class="f-w-600 m-b-8 d-block">Date</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <input matInput [matDatepicker]="picker" id="date_heure" name="date_heure"
-              [(ngModel)]="selectedDate" (dateChange)="onDateChange()" required [disabled]="isDateDisabled" [min]="tomorrow"/>
+            <input matInput [matDatepicker]="picker" id="date_heure" name="date_heure" [(ngModel)]="selectedDate"
+              (dateChange)="onDateChange()" required [disabled]="isDateDisabled" [min]="tomorrow" />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -45,7 +46,8 @@
         <div class="col" *ngIf="creneaux.length > 0">
           <mat-label class="f-w-600 m-b-8 d-block">Créneaux disponibles</mat-label>
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select [(ngModel)]="selectedCreneau" name="creneau" (selectionChange)="combineDateAndCreneau($event.value)">
+            <mat-select [(ngModel)]="selectedCreneau" name="creneau"
+              (selectionChange)="combineDateAndCreneau($event.value)">
               <mat-option *ngFor="let creneau of creneaux" [value]="creneau">
                 {{ creneau }}
               </mat-option>
@@ -68,9 +70,9 @@
   <mat-card-content>
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <mat-card-title>Liste des Rendez-vous</mat-card-title>
-      <button mat-raised-button color="primary" href="rendez-vous-client-stat.component.html">
+      <!-- <button mat-raised-button color="primary" href="rendez-vous-client-stat.component.html">
         Voir les statistiques
-      </button>
+      </button> -->
     </div>
 
     <div class="table-responsive">
@@ -132,10 +134,9 @@
   </mat-card-content>
 </mat-card>
 
-<div class="statistiques-container">
+<!-- <div class="statistiques-container">
   <h3>Statistiques des Rendez-vous</h3>
 
-  <!-- Sélection du mois et de l'année -->
   <div class="filters">
     <label for="mois">Mois:</label>
     <select id="mois" [(ngModel)]="moisSelectionne" (change)="loadStatistiques()">
@@ -151,9 +152,7 @@
       </option>
     </select>
   </div>
-
-  <!-- Affichage des statistiques -->
   <div class="stats">
     <p><strong>Total des rendez-vous :</strong> {{ statistiques.totalRendezVous || 0 }}</p>
   </div>
-</div>
+</div> -->
