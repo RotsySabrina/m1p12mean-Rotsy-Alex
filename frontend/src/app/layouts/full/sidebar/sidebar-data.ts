@@ -5,14 +5,10 @@ export const navItems: NavItem[] = [
     navCap: 'Home',
   },
   {
-    displayName: 'Dashboard',
+    displayName: 'Accueil',
     iconName: 'solar:atom-line-duotone',
     route: '/dashboard',
     roles: ['manager', 'mecanicien', 'client'], // Accessible à tous
-  },
-  {
-    navCap: 'Gestion',
-    divider: true
   },
   {
     displayName: 'Stat rendez-vous',
@@ -24,6 +20,7 @@ export const navItems: NavItem[] = [
     displayName: 'Liste Rendez-vous',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/mecanicien_rdv',
+    roles: ['mecanicien']
   },
   {
     displayName: 'Assignation',
@@ -59,7 +56,7 @@ export const navItems: NavItem[] = [
     displayName: 'Véhicule',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/vehicules',
-    roles: ['manager', 'mecanicien'],
+    roles: ['client'],
   },
   {
     displayName: 'Catégorie',
@@ -71,6 +68,6 @@ export const navItems: NavItem[] = [
     displayName: 'Services',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/services',
-    roles: ['manager', 'mecanicien'],
+    roles: ['manager'],
   },
 ];
