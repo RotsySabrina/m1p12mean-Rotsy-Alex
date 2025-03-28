@@ -29,7 +29,7 @@ export const UiComponentsRoutes: Routes = [
         component: MecanicienRdvComponent,
       },
       {
-        path: 'vehicule_service',
+        path: 'vehicule_service/:id',
         component: VehiculeServiceComponent,
       },
       {

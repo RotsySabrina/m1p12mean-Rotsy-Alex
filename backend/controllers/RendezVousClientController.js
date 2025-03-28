@@ -1,8 +1,6 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousCategorieService = require("../models/RendezVousCategorieService");
 const CategorieService = require("../models/CategorieService");
-
-const mongoose = require("mongoose");
 const User = require("../models/User");
 
 exports.createRendezVousWithCategorieServices = async (req, res) => {
@@ -52,7 +50,7 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
             .populate("id_vehicule")
             .lean();
 
-        console.log("Rendez-vous trouvés :", rendezVous.length);
+        // console.log("Rendez-vous trouvés :", rendezVous.length);
         if (!rendezVous.length) {
             return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce client." });
         }
@@ -70,7 +68,7 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
             rdv.CategorieServices = servicesAssocies.map(s => s.id_categorie_service);
         }
 
-        console.log("Résultat final des rendez-vous :", JSON.stringify(rendezVous, null, 2));
+        // console.log("Résultat final des rendez-vous :", JSON.stringify(rendezVous, null, 2));
         res.status(200).json({ rendezVous });
     } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous :", error);
@@ -80,18 +78,18 @@ exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
 
 exports.updateRendezVousMecanicien = async (req, res) => {
     try {
-        console.log("Requête reçue :", req.body);
+        // console.log("Requête reçue :", req.body);
         const { rendezVousId, mecanicienId } = req.body;
 
         const rendezVous = await RendezVousClient.findById(rendezVousId);
-        console.log("rendezVous :", rendezVous);
+        // console.log("rendezVous :", rendezVous);
 
         if (!rendezVous) {
             return res.status(404).json({ success: false, message: "Rendez-vous non trouvé" });
         }
 
         const mecanicien = await User.findById(mecanicienId);
-        console.log("mecanicien :", mecanicien);
+        // console.log("mecanicien :", mecanicien);
 
         if (!mecanicien) {
             return res.status(404).json({ success: false, message: "Mécanicien non trouvé" });
