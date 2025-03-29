@@ -69,26 +69,30 @@ exports.getDevisByClientId = async (req, res) => {
         })
         .exec();
   
-      const filteredDevis = devis.filter((devis) => devis.id_rendez_vous_client !== null);
-  
-      if (filteredDevis.length === 0) {
-        return res.status(404).json({ message: "Aucun devis trouvé pour ce client" });
-      }
-  
-      for (let devis of filteredDevis) {
-        const services = await RendezVousService.find({ id_rendez_vous_client: devis.id_rendez_vous_client._id })
-          .populate({
-            path: "id_service",
-            select: "description cout",
-          })
-          .exec();
-  
-        devis = devis.toObject(); 
-        devis.services = services.map((s) => ({
-          description: s.id_service.description,
-          cout: s.id_service.cout,
-        }));
-      }
+        const filteredDevis = devis.filter((devis) => devis.id_rendez_vous_client !== null);
+
+        if (filteredDevis.length === 0) {
+          return res.status(404).json({ message: "Aucun devis trouvé pour ce client" });
+        }
+        
+        for (let i = 0; i < filteredDevis.length; i++) {
+          const devis = filteredDevis[i];
+        
+          const services = await RendezVousService.find({ id_rendez_vous_client: devis.id_rendez_vous_client._id })
+            .populate({
+              path: "id_service",
+              select: "description cout",
+            })
+            .exec();
+        
+          const devisObject = devis.toObject(); 
+          devisObject.services = services.map((s) => ({
+            description: s.id_service.description,
+            cout: s.id_service.cout,
+          }));
+        
+          filteredDevis[i] = devisObject;
+        }
   
       return res.status(200).json(filteredDevis);
     } catch (error) {
@@ -96,4 +100,31 @@ exports.getDevisByClientId = async (req, res) => {
       return res.status(500).json({ message: "Erreur lors de la récupération des devis", error });
     }
   };
+
+  exports.updateStatus = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { status } = req.body;
+
+        const validStatuses = ["en_attente", "accepte", "refuse"];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Statut invalide." });
+        }
+        console.log("status reçu:", status);
+        const updatedDevis = await Devis.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedDevis) {
+            return res.status(404).json({ message: "Devis non trouvé." });
+        }
+
+        res.status(200).json({ message: "Statut mis à jour avec succès", devis: updatedDevis });
+    } catch (error) {
+        console.log("Erreur status :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour du statut", error: error.message });
+    }
+};
 

@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class DevisService {
-private apiUrl = `${environment.apiUrl}/api/vehicules`;
+private apiUrl = `${environment.apiUrl}/api/devis`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,6 +18,10 @@ private apiUrl = `${environment.apiUrl}/api/vehicules`;
   }
 
   getDevis(): Observable<any> {
-    return this.http.get(this.apiUrl, { headers: this.getHeaders() });
+    return this.http.get(`${this.apiUrl}/client`, { headers: this.getHeaders() });
+  }
+
+  updateStatus(id: string, status: string): Observable<any> {
+      return this.http.put(`${this.apiUrl}/${id}`, {status}, { headers: this.getHeaders() });
   }
 }

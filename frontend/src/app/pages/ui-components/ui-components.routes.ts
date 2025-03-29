@@ -14,6 +14,7 @@ import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statis
 import { RoleGuard } from '../../auth/role.guard';
 import { VehiculeServiceComponent } from './vehicule-service/vehicule-service.component';
 import {DevisComponent} from './devis/devis.component';
+import { ServiceClientListComponent } from './service-client-list/service-client-list.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -82,6 +83,10 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'devis',
         component: DevisComponent
+      },
+      {
+        path: 'service_client',
+        component: ServiceClientListComponent
       },
     ],
   },
