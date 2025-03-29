@@ -114,12 +114,33 @@ export class StatistiqueRendezVousComponent implements OnInit, AfterViewInit, On
     );
 
     // Création de l'axe X (Mois)
+    // let xAxis = chart.xAxes.push(
+    //   am5xy.CategoryAxis.new(this.root, {
+    //     categoryField: "mois",
+    //     renderer: am5xy.AxisRendererX.new(this.root, {})
+    //   })
+    // );
+
+    // Création de l'axe X (Mois)
     let xAxis = chart.xAxes.push(
       am5xy.CategoryAxis.new(this.root, {
         categoryField: "mois",
-        renderer: am5xy.AxisRendererX.new(this.root, {})
+        renderer: am5xy.AxisRendererX.new(this.root, {
+          minGridDistance: 30 // Ajuste l'espace entre les labels
+        })
       })
     );
+
+    // Forcer l'affichage de tous les labels des mois
+    xAxis.get("renderer").labels.template.setAll({
+      rotation: -45, // Incliner pour éviter le chevauchement
+      centerY: am5.p50,
+      centerX: am5.p50
+    });
+    xAxis.get("renderer").grid.template.setAll({
+      location: 1
+    });
+
 
     // Création de l'axe Y (Nombre de rendez-vous)
     let yAxis = chart.yAxes.push(
