@@ -44,4 +44,8 @@ export class RendezVousClientService {
     return this.http.get(`${this.apiUrl}/statistiques?mois=${mois}&annee=${annee}`, { headers: this.getHeaders() });
   }
 
+  getStatistiquesParAnnee(annee: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/statistiques?annee=${annee}`, { headers: this.getHeaders() });
+  }
+
 }
