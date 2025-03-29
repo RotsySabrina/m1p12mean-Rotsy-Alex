@@ -3,33 +3,22 @@
         <mat-card-title class="m-b-0">Ajouter un Service</mat-card-title>
     </mat-card-header>
     <mat-card-content class="b-t-1">
-        <form (ngSubmit)="addDevis()" #devisForm="ngForm">
+        <form (ngSubmit)="addServicesToRendezVous()" #devisForm="ngForm">
             <div class="row d-flex align-items-center gap-3">
                 <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Service</mat-label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-select id="id_service" name="id_service" multiple required>
-                            <mat-option value="" disabled selected>Sélectionner un Service</mat-option>
-                            <mat-option *ngFor="let service of services" [value]="service._id">
-                                {{ service.id_categorie_service.description }} {{ service.description }} {{ service.cout }}ar
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label class="f-w-600 m-b-8 d-block">Services</mat-label>
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-select id="id_service" name="id_service" [(ngModel)]="selectedServices" multiple required>
+                                <mat-option value="" disabled selected>Sélectionner un Service</mat-option>
+                                <mat-optgroup *ngFor="let category of groupedServices | keyvalue" [label]="category.key">
+                                    <mat-option *ngFor="let service of category.value" [value]="service.id">
+                                        {{ service.description }} - {{ service.cout }} Ar
+                                    </mat-option>
+                                </mat-optgroup>
+                            </mat-select>
+                        </mat-form-field>
                 </div>
-                <!-- <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Description</mat-label>
-                    <mat-form-field appearance="outline" class="w-100" color="primary">
-                        <input matInput type="text" id="description" name="description"
-                            [(ngModel)]="newService.description" required placeholder="Description du service" />
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-label class="f-w-600 m-b-8 d-block">Coût</mat-label>
-                    <mat-form-field appearance="outline" class="w-100" color="primary">
-                        <input matInput type="number" id="cout" name="cout" [(ngModel)]="newService.cout" required
-                            placeholder="Coût du service" />
-                    </mat-form-field>
-                </div> -->
+
             </div>
             <div class="m-t-12 d-flex justify-content-end gap-3">
                 <button mat-flat-button color="primary" type="submit" [disabled]="devisForm.invalid">Ajouter</button>
@@ -44,74 +33,30 @@
         <mat-card-title>Liste des Services</mat-card-title>
 
         <div class="table-responsive">
-            <table mat-table class="w-100">
+            <table mat-table [dataSource]="rendezVousServices" class="w-100">
+
+                <ng-container matColumnDef="categorieServices">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Catégorie Services </th>
+                    <td mat-cell *matCellDef="let element">{{element.categoryDescription}}</td>
+                </ng-container>
 
                 <ng-container matColumnDef="service">
-                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Service </th>
-                    <!-- <td mat-cell *matCellDef="let service">
-                        <ng-container *ngIf="editedService?._id !== service._id; else editCategorie">
-                            <p>{{ service.id_categorie_service.description }}</p>
-                        </ng-container>
-                        <ng-template #editCategorie>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <mat-select [(ngModel)]="editedService.id_categorie_service">
-                                    <mat-option *ngFor="let categorie of categories" [value]="categorie._id">
-                                        {{ categorie.description }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </ng-template>
-                    </td> -->
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Services </th>
+                    <td mat-cell *matCellDef="let element">{{element.serviceDescription}}</td>
                 </ng-container>
-
 
                 <ng-container matColumnDef="cout">
-                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Coût </th>
-                    <!-- <td mat-cell *matCellDef="let service">
-                        <ng-container *ngIf="editedService?._id !== service._id; else editDescription">
-                            <p>{{ service.description }}</p>
-                        </ng-container>
-                        <ng-template #editDescription>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <input matInput [(ngModel)]="editedService.description" />
-                            </mat-form-field>
-                        </ng-template>
-                    </td> -->
-                </ng-container>
-
-
-                <ng-container matColumnDef="montant_total">
-                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Montant total </th>
-                    <!-- <td mat-cell *matCellDef="let service">
-                        <ng-container *ngIf="editedService?._id !== service._id; else editCout">
-                            <p>{{ service.cout }} Ar</p>
-                        </ng-container>
-                        <ng-template #editCout>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <input matInput type="number" [(ngModel)]="editedService.cout" />
-                            </mat-form-field>
-                        </ng-template>
-                    </td> -->
-                </ng-container>
-
-
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
-                    <!-- <td mat-cell *matCellDef="let service">
-                        <ng-container *ngIf="editedService?._id !== service._id">
-                            <button mat-button color="primary" (click)="editService(service)">Modifier</button>
-                            <button mat-button color="warn" (click)="deleteService(service._id)">Supprimer</button>
-                        </ng-container>
-                        <ng-container *ngIf="editedService?._id === service._id">
-                            <button mat-button color="primary" (click)="saveService()">Sauvegarder</button>
-                            <button mat-button color="warn" (click)="cancelEdit()">Annuler</button>
-                        </ng-container>
-                    </td> -->
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Coût </th>
+                    <td mat-cell *matCellDef="let element">{{element.serviceCout | number}} Ar</td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+
+            <div class="total-cost">
+                <p><strong>Total :</strong> {{ getTotalCost() | number }} Ar</p>
+            </div>
         </div>
     </mat-card-content>
 </mat-card>

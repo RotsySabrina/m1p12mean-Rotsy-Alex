@@ -7,7 +7,8 @@ const DevisSchema = new mongoose.Schema({
     ref: "RendezVousClient",
     required: true
   },
-  montant_total: { type: mongoose.Types.Decimal128, required: true }
+  montant_total: { type: mongoose.Types.Decimal128, required: true },
+  status: { type: String, enum: ["en_attente", "accepte", "refuse"], default: "en_attente", required: true }
 });
 
 module.exports = mongoose.model("Devis", DevisSchema);

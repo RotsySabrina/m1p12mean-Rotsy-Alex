@@ -22,7 +22,6 @@ export class VehiculeListComponent implements OnInit {
   constructor(private vehiculeService: VehiculeService) { }
   ngOnInit(): void {
     this.loadVehicules();
-
   }
 
   loadVehicules(): void {
