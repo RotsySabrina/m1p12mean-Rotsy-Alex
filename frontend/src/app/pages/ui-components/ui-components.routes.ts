@@ -13,6 +13,7 @@ import { MecanicienRdvComponent } from './mecanicien-rdv/mecanicien-rdv.componen
 import { StatistiqueRendezVousComponent } from './statistique-rendez-vous/statistique-rendez-vous.component';
 import { RoleGuard } from '../../auth/role.guard';
 import { VehiculeServiceComponent } from './vehicule-service/vehicule-service.component';
+import {DevisComponent} from './devis/devis.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -77,6 +78,10 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'services',
         component: ServiceListComponent
+      },
+      {
+        path: 'devis',
+        component: DevisComponent
       },
     ],
   },

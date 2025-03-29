@@ -76,7 +76,7 @@ export class VehiculeServiceComponent implements OnInit {
   }
 
   addServicesToRendezVous() {
-    console.log("📌 Services sélectionnés :", this.selectedServices);
+    // console.log("📌 Services sélectionnés :", this.selectedServices);
   
     if (!this.idRdvClient || !Array.isArray(this.selectedServices) || this.selectedServices.length === 0) {
       console.warn("⚠ Aucun service sélectionné ou format incorrect !");
@@ -85,20 +85,31 @@ export class VehiculeServiceComponent implements OnInit {
   
     this.vehiculeService.addRendezVousServices(this.idRdvClient, this.selectedServices)
       .subscribe(
-        response => console.log("📌 Services ajoutés avec succès :", response),
+        response => {
+          console.log("📌 Services ajoutés avec succès :", response);
+  
+          if (this.idRdvClient) { 
+            this.selectRendezVousServices(this.idRdvClient);
+          }
+  
+          setTimeout(() => {
+            const totalCost = this.getTotalCost();
+  
+            // 4️⃣ Création du devis avec le montant total
+            if (this.idRdvClient) {
+              this.vehiculeService.addDevis(this.idRdvClient, totalCost)
+                .subscribe(
+                  devisResponse => console.log("📌 Devis créé avec succès :", devisResponse),
+                  devisError => console.error("❌ Erreur lors de la création du devis :", devisError)
+                );
+            }
+          }, 500); 
+        },
         error => console.error("❌ Erreur lors de l'ajout des services :", error)
       );
-  }
+  }  
 
   getTotalCost(): number {
     return this.rendezVousServices.reduce((total, service) => total + (service.serviceCout || 0), 0);
   }  
-  
-  // addDevis(): void {
-  //   if (this.newDevis.id_rendez_vous && this.newDevis.montant_total) {
-  //     this.vehiculeService.addDevis(this.newDevis).subscribe(() => {
-  //       this.newDevis = { id_rendez_vous: '', montant_total: '' };
-  //     });
-  //   }
-  // }
 }

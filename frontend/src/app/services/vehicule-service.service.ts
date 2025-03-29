@@ -36,7 +36,7 @@ export class VehiculeServiceService {
     return this.http.get(`${this.apiUrl}/rdv_services/get_rdv_services/${id_rendez_vous_client}`, { headers: this.getHeaders() });
   }  
   
-  addDevis(devis: any): Observable<any> {
-    return this.http.post(this.apiUrl, devis, { headers: this.getHeaders() });
+  addDevis(id_rendez_vous_client: string, montant_total: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/devis`, { id_rendez_vous_client, montant_total }, { headers: this.getHeaders() });
   }
 }
