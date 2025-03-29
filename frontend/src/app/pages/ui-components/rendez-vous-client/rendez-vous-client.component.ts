@@ -50,14 +50,14 @@ export class RendezVousClientComponent implements OnInit {
     this.loadRendezVousClients();
     this.getCategorieServices();
     this.getVehicules();
-    this.loadStatistiques();
+    // this.loadStatistiques();
   }
 
-  loadStatistiques(): void {
-    this.rendez_vous_clientService.getStatistiques(this.moisSelectionne, this.anneeSelectionnee).subscribe(
-      data => this.statistiques = data
-    );
-  }
+  // loadStatistiques(): void {
+  //   this.rendez_vous_clientService.getStatistiques(this.moisSelectionne, this.anneeSelectionnee).subscribe(
+  //     data => this.statistiques = data
+  //   );
+  // }
 
   onDateChange() {
     if (this.selectedDate) {

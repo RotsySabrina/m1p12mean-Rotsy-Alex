@@ -25,7 +25,7 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
             duree_totale
         });
 
-        const savedRdv = await newRdv.save(); 
+        const savedRdv = await newRdv.save();
 
         const catServicesAssocies = services.map(service => ({
             id_rendez_vous_client: savedRdv._id,
@@ -98,10 +98,10 @@ exports.updateRendezVousMecanicien = async (req, res) => {
         rendezVous.id_mecanicien = mecanicienId;
         await rendezVous.save();
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "Mécanicien ajouté avec succès", 
-            data: rendezVous 
+        return res.status(200).json({
+            success: true,
+            message: "Mécanicien ajouté avec succès",
+            data: rendezVous
         });
 
     } catch (error) {
@@ -155,14 +155,14 @@ exports.getRendezVousMecanicien = async (req, res) => {
         const mecanicienId = req.user.id;
 
         const now = new Date();
-        const rendezVous = await RendezVousClient.find({ 
-            id_mecanicien: mecanicienId, 
-            date_heure: { $gte: now } 
+        const rendezVous = await RendezVousClient.find({
+            id_mecanicien: mecanicienId,
+            date_heure: { $gte: now }
         })
-        .populate("id_user", "nom prenom email")
-        .populate("id_vehicule", "marque modele immatriculation")
-        .sort({ date_heure: 1 });
-        
+            .populate("id_user", "nom prenom email")
+            .populate("id_vehicule", "marque modele immatriculation")
+            .sort({ date_heure: 1 });
+
         const rendezVousIds = rendezVous.map(rdv => rdv._id);
         const categories = await RendezVousCategorieService.find({ id_rendez_vous_client: { $in: rendezVousIds } })
             .populate("id_categorie_service", "nom description");
@@ -171,7 +171,7 @@ exports.getRendezVousMecanicien = async (req, res) => {
             ...rdv.toObject(),
             categories: categories
                 .filter(cat => cat.id_rendez_vous_client.toString() === rdv._id.toString())
-                .map(cat => cat.id_categorie_service) 
+                .map(cat => cat.id_categorie_service)
         }));
 
         return res.status(200).json({
@@ -241,29 +241,57 @@ exports.getRendezVousByClient = async (req, res) => {
 
 exports.getStatistiques = async (req, res) => {
     try {
-        const { mois, annee } = req.query;
+        const { annee } = req.query;
 
-        // Convertir les valeurs en entiers
-        const month = parseInt(mois);
+        // Convertir la valeur de l'année en entier
         const year = parseInt(annee);
 
-        // Vérifier que les valeurs sont valides
-        if (isNaN(month) || isNaN(year)) {
-            return res.status(400).json({ message: "Mois et année requis" });
+        // Vérifier que l'année est valide
+        if (isNaN(year)) {
+            return res.status(400).json({ message: "Année requise et doit être un nombre valide." });
         }
 
-        // Filtrer les rendez-vous par mois et année
+        // Créer un tableau pour stocker le nombre de rendez-vous pour chaque mois
+        let moisTotaux = Array(12).fill(0);
+
+        // Filtrer les rendez-vous par année
         const rendezVous = await RendezVousClient.find({
             date_heure: {
-                $gte: new Date(year, month - 1, 1), // Début du mois
-                $lt: new Date(year, month, 1) // Fin du mois
+                $gte: new Date(year, 0, 1), // Début de l'année
+                $lt: new Date(year + 1, 0, 1) // Début de l'année suivante
             }
         });
 
+        // Log des rendez-vous récupérés
+        console.log("Rendez-vous récupérés:", rendezVous);
+
+        // Calculer le nombre de rendez-vous pour chaque mois
+        rendezVous.forEach((rendezvous) => {
+            const mois = new Date(rendezvous.date_heure).getMonth();  // Récupérer le mois (0-11)
+            moisTotaux[mois] += 1; // Incrémenter le total du mois
+        });
+
+        // Log des totaux mensuels
+        console.log("Totaux mensuels:", moisTotaux);
+
+        // Créer un tableau de mois avec les totaux
+        const moisData = moisTotaux.map((total, index) => {
+            return {
+                mois: index + 1, // Mois (1 à 12)
+                count: total // Nombre total de rendez-vous pour ce mois
+            };
+        });
+
+        // Log des données qui seront envoyées au frontend
+        console.log("Données envoyées au frontend:", moisData);
+
+        // Retourner les totaux pour chaque mois sous forme de tableau d'objets
         res.status(200).json({
-            totalRendezVous: rendezVous.length,
+            moisTotaux: moisData,  // Tableau des totaux par mois avec mois et nombre
         });
     } catch (error) {
+        console.error("Erreur serveur:", error);
         res.status(500).json({ message: "Erreur serveur", error });
     }
 };
+
