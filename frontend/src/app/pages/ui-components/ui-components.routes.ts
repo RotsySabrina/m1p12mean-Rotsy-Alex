@@ -18,6 +18,7 @@ import { ServiceClientListComponent } from './service-client-list/service-client
 import { ReparationsComponent } from './reparations/reparations.component';
 import { ReparationDetailsComponent } from './reparation-details/reparation-details.component';
 import { ReparationServiceComponent } from './reparation-service/reparation-service.component';
+import { ReparationMecanicienComponent } from './reparation-mecanicien/reparation-mecanicien.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -100,9 +101,15 @@ export const UiComponentsRoutes: Routes = [
         component: ReparationDetailsComponent
       },
       {
-        path: 'reparation_services',
+        path: 'reparation_services/:id',
         component: ReparationServiceComponent
-      }
+      },
+      {
+        path: 'rep_meca',
+        component: ReparationMecanicienComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'mecanicien' }
+      },
     ],
   },
 ];
