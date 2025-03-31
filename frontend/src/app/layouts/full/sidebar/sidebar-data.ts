@@ -77,7 +77,7 @@ export const navItems: NavItem[] = [
     roles: ['client'],
   },
   {
-    displayName: 'Reparations',
+    displayName: 'Réparations',
     iconName: 'solar:tablet-line-duotone',
     route: '/ui-components/reparations',
     roles: ['client'],
