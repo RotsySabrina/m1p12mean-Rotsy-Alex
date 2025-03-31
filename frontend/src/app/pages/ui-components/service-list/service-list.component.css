@@ -1,0 +1,24 @@
+.notification {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease-in-out;
+}
+
+.success {
+    background-color: #4CAF50;
+    /* Vert */
+}
+
+.error {
+    background-color: #F44336;
+    /* Rouge */
+}

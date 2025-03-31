@@ -3,6 +3,7 @@ import { CategorieServiceService } from '../../../services/categorie-service.ser
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
+import { AlerteService } from 'src/app/services/alerte.service';
 
 @Component({
   selector: 'app-categorie-service-list',
@@ -12,13 +13,27 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class CategorieServiceListComponent implements OnInit {
 
-  newCategorie = { description: '' };
-  displayedColumns: string[] = ['description', 'actions'];
+  message: string | null = null;
+  isSuccess: boolean = true;
+
+  newCategorie = { description: '', duree: '' };
+  displayedColumns: string[] = ['description', 'duree', 'actions'];
   categories: any[] = [];
 
-  editedCategorie: any = null; 
+  editedCategorie: any = null;
 
-  constructor(private categorieService: CategorieServiceService) { }
+  constructor(private categorieService: CategorieServiceService,
+    private alerteService: AlerteService) {
+    this.alerteService.message$.subscribe(msg => {
+      this.message = msg;
+      this.isSuccess = this.alerteService.getSuccessStatus();
+
+      // Masquer l'alerte après 3 secondes
+      setTimeout(() => {
+        this.message = null;
+      }, 3000);
+    });
+  }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -30,22 +45,30 @@ export class CategorieServiceListComponent implements OnInit {
   }
 
   deleteCategorie(id: string): void {
-    console.log("Suppression de la catégorie avec ID :", id);
-    this.categorieService.deleteCategorie(id).subscribe(() => {
-      console.log("Catégorie supprimée avec succès !");
-      this.loadCategories(); 
-    }, error => {
-      console.error("Erreur lors de la suppression :", error);
-    });
+    if (confirm("Voulez-vous vraiment supprimer cette catégorie ?")) {
+      this.categorieService.deleteCategorie(id).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.alerteService.showMessage("Catégorie supprimée avec succès", true);
+        },
+        error: () => this.alerteService.showMessage("Erreur lors de la suppression de la catégorie", false)
+      });
+    }
   }
-  
+
 
   addCategorie(): void {
-    if (this.newCategorie.description) {
-      this.categorieService.addCategorie(this.newCategorie).subscribe(() => {
-        this.loadCategories(); // Recharge la liste après ajout
-        this.newCategorie = { description: '' }; // Réinitialise le formulaire
+    if (this.newCategorie.description && this.newCategorie.duree) {
+      this.categorieService.addCategorie(this.newCategorie).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.newCategorie = { description: '', duree: '' };
+          this.alerteService.showMessage("Catégorie ajoutée avec succès", true);
+        },
+        error: () => this.alerteService.showMessage("Erreur lors de l'ajout de la catégorie", false)
       });
+    } else {
+      this.alerteService.showMessage("Veuillez remplir la description", false);
     }
   }
 
@@ -55,13 +78,16 @@ export class CategorieServiceListComponent implements OnInit {
 
   saveCategorie(): void {
     if (this.editedCategorie) {
-      this.categorieService.updateCategorie(this.editedCategorie._id, this.editedCategorie).subscribe(updatedCategorie => {
-        // Mettre à jour la liste localement après modification
-        const index = this.categories.findIndex(s => s._id === updatedCategorie._id);
-        if (index !== -1) {
-          this.categories[index] = updatedCategorie;
-        }
-        this.editedCategorie = null; // Quitter le mode édition
+      this.categorieService.updateCategorie(this.editedCategorie._id, this.editedCategorie).subscribe({
+        next: (updatedCategorie) => {
+          const index = this.categories.findIndex(s => s._id === updatedCategorie._id);
+          if (index !== -1) {
+            this.categories[index] = updatedCategorie;
+          }
+          this.editedCategorie = null;
+          this.alerteService.showMessage("Catégorie mise à jour avec succès", true);
+        },
+        error: () => this.alerteService.showMessage("Erreur lors de la mise à jour de la catégorie", false)
       });
     }
   }

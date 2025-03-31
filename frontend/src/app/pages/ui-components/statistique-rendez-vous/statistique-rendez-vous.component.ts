@@ -84,15 +84,15 @@ export class StatistiqueRendezVousComponent implements OnInit, AfterViewInit, On
     console.log("🚀 afficherGraphique() appelé !");
 
     if (!this.chartDiv) {
-        console.error("❌ Erreur : chartDiv est introuvable !");
-        return;
+      console.error("❌ Erreur : chartDiv est introuvable !");
+      return;
     }
 
     console.log("✅ chartDiv trouvé :", this.chartDiv.nativeElement);
 
     if (this.root) {
-        console.log("♻️ Suppression de l'ancien graphique...");
-        this.root.dispose();
+      console.log("♻️ Suppression de l'ancien graphique...");
+      this.root.dispose();
     }
 
     // Création du Root amCharts
@@ -104,66 +104,66 @@ export class StatistiqueRendezVousComponent implements OnInit, AfterViewInit, On
 
     // Création du Chart XY
     let chart = this.root.container.children.push(
-        am5xy.XYChart.new(this.root, {
-            panX: true,
-            panY: true,
-            wheelX: "panX",
-            wheelY: "zoomX",
-            layout: this.root.verticalLayout
-        })
+      am5xy.XYChart.new(this.root, {
+        panX: true,
+        panY: true,
+        wheelX: "panX",
+        wheelY: "zoomX",
+        layout: this.root.verticalLayout
+      })
     );
 
     // Création de l'axe X (Mois)
     let xAxis = chart.xAxes.push(
-        am5xy.CategoryAxis.new(this.root, {
-            categoryField: "mois",
-            renderer: am5xy.AxisRendererX.new(this.root, {
-                minGridDistance: 30 // Ajuste l'espace entre les labels
-            })
+      am5xy.CategoryAxis.new(this.root, {
+        categoryField: "mois",
+        renderer: am5xy.AxisRendererX.new(this.root, {
+          minGridDistance: 30 // Ajuste l'espace entre les labels
         })
+      })
     );
 
     // Ajouter un label "Mois" à l'axe X
     xAxis.children.push(
-        am5.Label.new(this.root, {
-            text: "Mois",
-            x: am5.p50, // Centre horizontalement
-            centerX: am5.p50,
-            paddingTop: 10
-        })
+      am5.Label.new(this.root, {
+        text: "Mois",
+        x: am5.p50, // Centre horizontalement
+        centerX: am5.p50,
+        paddingTop: 10
+      })
     );
 
     // Forcer l'affichage de tous les labels des mois
     xAxis.get("renderer").labels.template.setAll({
-        rotation: -45, // Incliner pour éviter le chevauchement
-        centerY: am5.p50,
-        centerX: am5.p50
+      rotation: -45, // Incliner pour éviter le chevauchement
+      centerY: am5.p50,
+      centerX: am5.p50
     });
     xAxis.get("renderer").grid.template.setAll({
-        location: 1
+      location: 1
     });
 
     // Création de l'axe Y (Nombre de rendez-vous)
     let yAxis = chart.yAxes.push(
-        am5xy.ValueAxis.new(this.root, {
-            renderer: am5xy.AxisRendererY.new(this.root, {})
-        })
+      am5xy.ValueAxis.new(this.root, {
+        renderer: am5xy.AxisRendererY.new(this.root, {})
+      })
     );
 
     // Ajouter un label "Nombre" à l'axe Y
     yAxis.children.push(
-        am5.Label.new(this.root, {
-            text: "Nombre",
-            rotation: -90, // Rotation verticale pour l'axe Y
-            y: am5.p50, // Centre verticalement
-            centerX: am5.p50
-        })
+      am5.Label.new(this.root, {
+        text: "Nombre",
+        rotation: -90, // Rotation verticale pour l'axe Y
+        y: am5.p50, // Centre verticalement
+        centerX: am5.p50
+      })
     );
 
     // Tableau des noms de mois
     const moisNoms = [
-        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
     ];
 
     // Vérification des données
@@ -171,38 +171,38 @@ export class StatistiqueRendezVousComponent implements OnInit, AfterViewInit, On
 
     // Vérifier si on a bien des données avant de continuer
     if (!this.statistiques.moisTotaux || this.statistiques.moisTotaux.length === 0) {
-        console.warn("⚠️ Aucune donnée disponible pour le graphique !");
-        return;
+      console.warn("⚠️ Aucune donnée disponible pour le graphique !");
+      return;
     }
 
     // Création des données du graphique avec les noms des mois
     let chartData = this.statistiques.moisTotaux.map((item: any) => ({
-        mois: moisNoms[item.mois - 1], // Remplacer le numéro par le nom du mois
-        count: item.count
+      mois: moisNoms[item.mois - 1], // Remplacer le numéro par le nom du mois
+      count: item.count
     }));
 
     console.log("📊 Données formatées pour le graphique :", chartData);
 
     // Vérifier si les données formatées sont valides
     if (chartData.length === 0) {
-        console.warn("⚠️ Données formatées vides !");
-        return;
+      console.warn("⚠️ Données formatées vides !");
+      return;
     }
 
     // Création de la série de données
     let series = chart.series.push(
-        am5xy.ColumnSeries.new(this.root, {
-            name: "Rendez-vous",
-            xAxis: xAxis,
-            yAxis: yAxis,
-            valueYField: "count",
-            categoryXField: "mois"
-        })
+      am5xy.ColumnSeries.new(this.root, {
+        name: "Rendez-vous",
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: "count",
+        categoryXField: "mois"
+      })
     );
 
     xAxis.data.setAll(chartData);
     series.data.setAll(chartData);
-}
+  }
 
 
 

@@ -3,6 +3,7 @@ import { CreneauxService } from '../../../services/creneaux.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
+import { AlerteService } from 'src/app/services/alerte.service';
 
 @Component({
   selector: 'app-creneaux-list',
@@ -14,12 +15,22 @@ import { MaterialModule } from 'src/app/material.module';
   styleUrl: './creneaux-list.component.scss'
 })
 export class CreneauxListComponent implements OnInit {
+  message: string | null = null;
+  isSuccess: boolean = true;
+
   creneaux: any[] = [];
 
   displayColumns: string[] = ['heure_ouverture', 'heure_fermeture', 'pause_debut', 'pause_fin', 'jours_non_travailles', 'actions'];
 
   newCreneaux = { heure_ouverture: '', heure_fermeture: '', pause_debut: '', pause_fin: '', jours_non_travailles: '' }
-  constructor(private creneauxService: CreneauxService) { }
+  constructor(private creneauxService: CreneauxService,
+    private alerteService: AlerteService) {
+    this.alerteService.message$.subscribe(msg => {
+      this.message = msg;
+      this.isSuccess = this.alerteService.getSuccessStatus();
+    });
+  }
+
   editedCreneau: any = null;
   ngOnInit(): void {
     this.loadCreneaux();
@@ -32,9 +43,15 @@ export class CreneauxListComponent implements OnInit {
 
   addCreneaux(): void {
     if (this.newCreneaux.heure_ouverture && this.newCreneaux.heure_fermeture && this.newCreneaux.pause_debut && this.newCreneaux.pause_fin && this.newCreneaux.jours_non_travailles) {
-      this.creneauxService.addCreneaux(this.newCreneaux).subscribe(() => {
-        this.loadCreneaux();
-        this.newCreneaux = { heure_ouverture: '', heure_fermeture: '', pause_debut: '', pause_fin: '', jours_non_travailles: '' };
+      this.creneauxService.addCreneaux(this.newCreneaux).subscribe({
+        next: () => {
+          this.loadCreneaux();
+          this.newCreneaux = { heure_ouverture: '', heure_fermeture: '', pause_debut: '', pause_fin: '', jours_non_travailles: '' };
+          this.alerteService.showMessage("Créneau ajouté avec succès", true);
+        },
+        error: () => {
+          this.alerteService.showMessage("Erreur lors de l'ajout du créneau", false);
+        }
       });
     }
   }
@@ -52,10 +69,18 @@ export class CreneauxListComponent implements OnInit {
   }
 
   saveCreneau(): void {
-    this.creneauxService.updateCreneaux(this.editedCreneau._id, this.editedCreneau).subscribe(() => {
-      this.loadCreneaux();
-      this.cancelEdit();
-    });
+    if (this.editedCreneau) {
+      this.creneauxService.updateCreneaux(this.editedCreneau._id, this.editedCreneau).subscribe({
+        next: () => {
+          this.loadCreneaux();
+          this.cancelEdit();
+          this.alerteService.showMessage("Créneau modifié avec succès", true);
+        },
+        error: () => {
+          this.alerteService.showMessage("Erreur lors de la modification du créneau", false);
+        }
+      });
+    }
   }
 
   // deleteCreneau(id: string): void {
