@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CategorieServiceService } from 'src/app/services/categorie-service.service';
 import { MaterialModule } from 'src/app/material.module';
+import { AlerteService } from 'src/app/services/alerte.service';
 
 @Component({
   selector: 'app-mecanicien-list',
@@ -17,6 +18,8 @@ import { MaterialModule } from 'src/app/material.module';
   styleUrls: ['./mecanicien-list.component.scss']
 })
 export class MecanicienListComponent implements OnInit {
+  message: string | null = null;
+  isSuccess: boolean = true;
 
   mecaniciens: any[] = [];
   categories: any[] = [];
@@ -27,8 +30,20 @@ export class MecanicienListComponent implements OnInit {
 
   constructor(
     private mecanicienService: MecanicienService,
-    private categorieService: CategorieServiceService
-  ) { }
+    private categorieService: CategorieServiceService,
+    private alerteService: AlerteService
+  ) {
+    // Écoute les messages d'alerte
+    this.alerteService.message$.subscribe(msg => {
+      this.message = msg;
+      this.isSuccess = this.alerteService.getSuccessStatus();
+
+      // Masquer le message après 3 secondes
+      setTimeout(() => {
+        this.message = null;
+      }, 3000);
+    });
+  }
 
   ngOnInit(): void {
     this.loadMecaniciens();
@@ -45,10 +60,18 @@ export class MecanicienListComponent implements OnInit {
 
   addMecanicien(): void {
     if (this.newMecanicien.nom && this.newMecanicien.prenom && this.newMecanicien.email && this.newMecanicien.specialisations.length > 0) {
-      this.mecanicienService.addMecanicien(this.newMecanicien).subscribe(() => {
-        this.loadMecaniciens();
-        this.resetForm();
+      this.mecanicienService.addMecanicien(this.newMecanicien).subscribe({
+        next: () => {
+          this.loadMecaniciens();
+          this.newMecanicien = { nom: '', prenom: '', email: '', mot_de_passe: '', specialisations: [] }; // Correction ici
+          this.alerteService.showMessage("Mécanicien ajouté avec succès", true);
+        },
+        error: () => {
+          this.alerteService.showMessage("Erreur lors de l'ajout du mécanicien", false);
+        }
       });
+    } else {
+      this.alerteService.showMessage("Veuillez remplir tous les champs obligatoires", false);
     }
   }
 
@@ -58,12 +81,18 @@ export class MecanicienListComponent implements OnInit {
 
   saveMecanicien(): void {
     if (this.editedMecanicien) {
-      this.mecanicienService.updateMecanicien(this.editedMecanicien._id, this.editedMecanicien).subscribe(updatedMecanicien => {
-        const index = this.mecaniciens.findIndex(m => m._id === updatedMecanicien._id);
-        if (index !== -1) {
-          this.mecaniciens[index] = updatedMecanicien;
+      this.mecanicienService.updateMecanicien(this.editedMecanicien._id, this.editedMecanicien).subscribe({
+        next: (updatedMecanicien) => {
+          const index = this.mecaniciens.findIndex(m => m._id === updatedMecanicien._id);
+          if (index !== -1) {
+            this.mecaniciens[index] = updatedMecanicien;
+          }
+          this.editedMecanicien = null;
+          this.alerteService.showMessage("Mécanicien mis à jour avec succès", true);
+        },
+        error: () => {
+          this.alerteService.showMessage("Erreur lors de la mise à jour", false);
         }
-        this.editedMecanicien = null;
       });
     }
   }
@@ -74,10 +103,17 @@ export class MecanicienListComponent implements OnInit {
 
   deleteMecanicien(id: string): void {
     if (confirm("Voulez-vous vraiment supprimer ce mécanicien ?")) {
-      this.mecanicienService.deleteMecanicien(id).subscribe(() => this.loadMecaniciens());
+      this.mecanicienService.deleteMecanicien(id).subscribe({
+        next: () => {
+          this.loadMecaniciens();
+          this.alerteService.showMessage("Mécanicien supprimé avec succès", true);
+        },
+        error: () => {
+          this.alerteService.showMessage("Erreur lors de la suppression", false);
+        }
+      });
     }
   }
-
   resetForm(): void {
     this.newMecanicien = {
       nom: '',

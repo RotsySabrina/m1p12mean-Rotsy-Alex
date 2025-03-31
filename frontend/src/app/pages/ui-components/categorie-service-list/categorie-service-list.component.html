@@ -1,4 +1,7 @@
 <mat-card class="cardWithShadow theme-card">
+    <div *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="notification">
+        {{ message }}
+    </div>
     <mat-card-header>
         <mat-card-title class="m-b-0">Ajouter une catégorie</mat-card-title>
     </mat-card-header>
@@ -10,6 +13,15 @@
                     <mat-form-field appearance="outline" class="w-100" color="primary">
                         <input matInput type="text" id="description" name="description"
                             [(ngModel)]="newCategorie.description" required placeholder="Description du catégorie" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row d-flex align-items-center gap-3">
+                <div class="col">
+                    <mat-label class="f-w-600 m-b-8 d-block"></mat-label>
+                    <mat-form-field appearance="outline" class="w-100" color="primary">
+                        <input matInput type="number" id="duree" name="duree" [(ngModel)]="newCategorie.duree" required
+                            placeholder="Duree" />
                     </mat-form-field>
                 </div>
             </div>
@@ -39,6 +51,20 @@
                         <ng-template #editDescription>
                             <mat-form-field appearance="outline" class="w-100">
                                 <input matInput [(ngModel)]="editedCategorie.description" />
+                            </mat-form-field>
+                        </ng-template>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="duree">
+                    <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Durée </th>
+                    <td mat-cell *matCellDef="let categorie">
+                        <ng-container *ngIf="editedCategorie?._id !== categorie._id; else editDuree">
+                            <p>{{ categorie.duree }}</p>
+                        </ng-container>
+                        <ng-template #editDuree>
+                            <mat-form-field appearance="outline" class="w-100">
+                                <input matInput [(ngModel)]="editedCategorie.duree" />
                             </mat-form-field>
                         </ng-template>
                     </td>

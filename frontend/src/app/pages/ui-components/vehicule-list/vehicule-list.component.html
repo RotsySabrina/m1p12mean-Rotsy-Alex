@@ -1,4 +1,7 @@
 <mat-card class="cardWithShadow theme-card">
+    <div *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="notification">
+        {{ message }}
+    </div>
     <mat-card-header>
         <mat-card-title class="m-b-0">Ajouter un véhicule</mat-card-title>
     </mat-card-header>
@@ -8,15 +11,15 @@
                 <div class="col">
                     <mat-label class="f-w-600 m-b-8 d-block">Marque</mat-label>
                     <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="text" id="marque" name="marque"
-                            [(ngModel)]="newVehicule.marque" required placeholder="Marque du véhicule" />
+                        <input matInput type="text" id="marque" name="marque" [(ngModel)]="newVehicule.marque" required
+                            placeholder="Marque du véhicule" />
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-label class="f-w-600 m-b-8 d-block">Modèle</mat-label>
                     <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="text" id="modele" name="modele"
-                            [(ngModel)]="newVehicule.modele" required placeholder="Modèle du véhicule" />
+                        <input matInput type="text" id="modele" name="modele" [(ngModel)]="newVehicule.modele" required
+                            placeholder="Modèle du véhicule" />
                     </mat-form-field>
                 </div>
                 <div class="col">
@@ -29,8 +32,8 @@
                 <div class="col">
                     <mat-label class="f-w-600 m-b-8 d-block">Année</mat-label>
                     <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="number" id="annee" name="annee"
-                            [(ngModel)]="newVehicule.annee" required placeholder="Année de fabrication" />
+                        <input matInput type="number" id="annee" name="annee" [(ngModel)]="newVehicule.annee" required
+                            placeholder="Année de fabrication" />
                     </mat-form-field>
                 </div>
             </div>
@@ -52,25 +55,25 @@
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Marque </th>
                     <td mat-cell *matCellDef="let vehicule">{{ vehicule.marque }}</td>
                 </ng-container>
-                
+
                 <!-- Modèle -->
                 <ng-container matColumnDef="modele">
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Modèle </th>
                     <td mat-cell *matCellDef="let vehicule">{{ vehicule.modele }}</td>
                 </ng-container>
-                
+
                 <!-- Immatriculation -->
                 <ng-container matColumnDef="immatriculation">
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Immatriculation </th>
                     <td mat-cell *matCellDef="let vehicule">{{ vehicule.immatriculation }}</td>
                 </ng-container>
-                
+
                 <!-- Année -->
                 <ng-container matColumnDef="annee">
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Année </th>
                     <td mat-cell *matCellDef="let vehicule">{{ vehicule.annee }}</td>
                 </ng-container>
-                
+
                 <!-- Actions -->
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Actions </th>
@@ -79,7 +82,7 @@
                         <button mat-button color="warn" (click)="deleteVehicule(vehicule._id)">Supprimer</button>
                     </td>
                 </ng-container>
-                
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>

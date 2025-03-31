@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { RendezVousClientService } from 'src/app/services/rendez-vous-client.service';
 import { CategorieServiceService } from 'src/app/services/categorie-service.service';
 import { VehiculeService } from 'src/app/services/vehicule.service';
-import {CreneauxServiceService} from 'src/app/services/creneaux-service.service';
+import { CreneauxServiceService } from 'src/app/services/creneaux-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
+import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
 
 @Component({
   selector: 'app-rendez-vous-client',
@@ -20,6 +21,9 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class RendezVousClientComponent implements OnInit {
 
+  message: string | null = null;
+  isSuccess: boolean = true;
+
   rendez_vous_client: any[] = [];
   categorie_services: any[] = [];
   vehicules: any[] = [];
@@ -29,7 +33,7 @@ export class RendezVousClientComponent implements OnInit {
   selectedDate!: string;
   creneaux: string[] = [];
   selectedCreneau!: string;
-  displayedColumns: string[] = ['vehicule', 'categorieServices', 'date_heure', 'duree' ,'status'];
+  displayedColumns: string[] = ['vehicule', 'categorieServices', 'date_heure', 'duree', 'status'];
 
   newRendezVousClient = {
     id_vehicule: '',
@@ -43,40 +47,45 @@ export class RendezVousClientComponent implements OnInit {
     private rendez_vous_clientService: RendezVousClientService,
     private categorieService: CategorieServiceService,
     private vehiculeService: VehiculeService,
-    private creneauxService: CreneauxServiceService
-  ) { }
+    private creneauxService: CreneauxServiceService,
+    private alerteService: AlerteService
+  ) {
+    this.alerteService.message$.subscribe(msg => {
+      this.message = msg;
+      this.isSuccess = this.alerteService.getSuccessStatus();
+
+      // Masquer l'alerte après 3 secondes
+      setTimeout(() => {
+        this.message = null;
+      }, 3000);
+    });
+    220
+  }
 
   ngOnInit(): void {
     this.loadRendezVousClients();
     this.getCategorieServices();
     this.getVehicules();
-    // this.loadStatistiques();
   }
-
-  // loadStatistiques(): void {
-  //   this.rendez_vous_clientService.getStatistiques(this.moisSelectionne, this.anneeSelectionnee).subscribe(
-  //     data => this.statistiques = data
-  //   );
-  // }
 
   onDateChange() {
     if (this.selectedDate) {
-        // console.log("selectedDate (raw):", this.selectedDate);
+      // console.log("selectedDate (raw):", this.selectedDate);
 
-        const dateObj = new Date(this.selectedDate);
-        // console.log("selectedDate (as Date object):", dateObj);
+      const dateObj = new Date(this.selectedDate);
+      // console.log("selectedDate (as Date object):", dateObj);
 
-        const timezoneOffset = dateObj.getTimezoneOffset() * 60000; // Convertir en millisecondes
-        const correctedDate = new Date(dateObj.getTime() - timezoneOffset);
+      const timezoneOffset = dateObj.getTimezoneOffset() * 60000; // Convertir en millisecondes
+      const correctedDate = new Date(dateObj.getTime() - timezoneOffset);
 
-        const formattedDate = correctedDate.toISOString().split('T')[0];
+      const formattedDate = correctedDate.toISOString().split('T')[0];
 
-        // console.log("formattedDate:", formattedDate);
+      // console.log("formattedDate:", formattedDate);
 
-        this.creneauxService.getCreneauxDisponibles(formattedDate, this.newRendezVousClient.catServices)
-            .subscribe(data => {
-                this.creneaux = data.creneaux;
-            });
+      this.creneauxService.getCreneauxDisponibles(formattedDate, this.newRendezVousClient.catServices)
+        .subscribe(data => {
+          this.creneaux = data.creneaux;
+        });
     }
   }
 
@@ -84,19 +93,19 @@ export class RendezVousClientComponent implements OnInit {
     if (this.selectedDate && selectedCreneau) {
       const timeParts = selectedCreneau.split(':'); // "14:00" => ["14", "00"]
       const combinedDate = new Date(this.selectedDate);
-  
+
       combinedDate.setHours(Number(timeParts[0]), Number(timeParts[1]), 0, 0);
-  
+
       // Formatter en "YYYY-MM-DD HH:MM"
       const yyyy = combinedDate.getFullYear();
       const mm = String(combinedDate.getMonth() + 1).padStart(2, '0'); // Mois de 0 à 11
       const dd = String(combinedDate.getDate()).padStart(2, '0');
       const hh = String(combinedDate.getHours()).padStart(2, '0');
       const mi = String(combinedDate.getMinutes()).padStart(2, '0');
-  
+
       // Stocker la date-heure locale sous format "YYYY-MM-DD HH:MM"
       this.newRendezVousClient.date_heure = `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-  
+
       console.log('Date et créneau combinés:', this.newRendezVousClient.date_heure);
     }
   }
@@ -132,12 +141,16 @@ export class RendezVousClientComponent implements OnInit {
 
   addRendezVousClient(): void {
     if (this.newRendezVousClient.id_vehicule && this.newRendezVousClient.date_heure && this.newRendezVousClient.catServices.length > 0) {
-
-      this.rendez_vous_clientService.addRendezVousClient(this.newRendezVousClient).subscribe(() => {
-        this.loadRendezVousClients();
-
-        this.resetForm();
+      this.rendez_vous_clientService.addRendezVousClient(this.newRendezVousClient).subscribe({
+        next: () => {
+          this.loadRendezVousClients();
+          this.newRendezVousClient = { id_vehicule: '', date_heure: '', catServices: [] }
+          this.alerteService.showMessage("Rendez-vous ajouté avec succès", true);
+        },
+        error: () => this.alerteService.showMessage("Erreur lors du prise de rendez-vous", false)
       });
+    } else {
+      this.alerteService.showMessage("Veuillez remplir tous les champs", false);
     }
   }
 
@@ -151,7 +164,7 @@ export class RendezVousClientComponent implements OnInit {
     } else if (rdvDate < now) {
       return 'Déjà passé';
     } else {
-      return 'En cours';  
+      return 'En cours';
     }
   }
 
@@ -165,7 +178,7 @@ export class RendezVousClientComponent implements OnInit {
   get isDateInvalid(): boolean {
     if (!this.selectedDate) return false;
     const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); 
+    currentDate.setHours(0, 0, 0, 0);
     return new Date(this.selectedDate) < currentDate;
   }
 
@@ -184,13 +197,16 @@ export class RendezVousClientComponent implements OnInit {
   saveRendezVousClient(): void {
     if (this.editedRendezVousClient) {
       this.rendez_vous_clientService.updateRendezVousClient(this.editedRendezVousClient._id, this.editedRendezVousClient)
-        .subscribe(updatedRendezVousClient => {
-          const index = this.rendez_vous_client.findIndex(s => s._id === updatedRendezVousClient._id);
-          if (index !== -1) {
-            this.rendez_vous_client[index] = updatedRendezVousClient;
-          }
-          this.editedRendezVousClient = null;
-
+        .subscribe({
+          next: (updatedRendezVousClient) => {
+            const index = this.rendez_vous_client.findIndex(s => s._id === updatedRendezVousClient._id);
+            if (index !== -1) {
+              this.rendez_vous_client[index] = updatedRendezVousClient;
+            }
+            this.editedRendezVousClient = null;
+            this.alerteService.showMessage("Rendez-vous mis à jour avec succès", true);
+          },
+          error: () => this.alerteService.showMessage("Erreur lors de la mise à jour du rendez-vous", false)
         });
     }
   }
@@ -203,7 +219,7 @@ export class RendezVousClientComponent implements OnInit {
     if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
       this.rendez_vous_clientService.cancelRendezVous(id).subscribe(() => {
         this.loadRendezVousClients();
-0
+        0
       });
     }
   }

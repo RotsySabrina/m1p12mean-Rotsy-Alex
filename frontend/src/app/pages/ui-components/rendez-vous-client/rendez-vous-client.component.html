@@ -1,4 +1,7 @@
 <mat-card class="cardWithShadow theme-card">
+  <div *ngIf="message" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="notification">
+    {{ message }}
+  </div>
   <mat-card-header>
     <mat-card-title class="m-b-0">Prendre un Rendez-vous</mat-card-title>
   </mat-card-header>

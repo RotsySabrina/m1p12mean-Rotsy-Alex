@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { ActivatedRoute } from '@angular/router';
+import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
 
 @Component({
   selector: 'app-vehicule-service',
@@ -12,7 +13,8 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './vehicule-service.component.scss'
 })
 export class VehiculeServiceComponent implements OnInit {
-
+  message: string | null = null;
+  isSuccess: boolean = true;
   services: any[] = [];
   groupedServices: { [key: string]: any[] } = {};
   idRdvClient: string | null = null;
@@ -22,11 +24,11 @@ export class VehiculeServiceComponent implements OnInit {
 
   rendezVousServices: any[] = [];
 
-  displayedColumns: string[] = ['categorieServices','service', 'cout'];
+  displayedColumns: string[] = ['categorieServices', 'service', 'cout'];
 
   constructor(
     private route: ActivatedRoute,
-    private vehiculeService: VehiculeServiceService  
+    private vehiculeService: VehiculeServiceService
   ) { }
 
   ngOnInit(): void {
@@ -49,17 +51,17 @@ export class VehiculeServiceComponent implements OnInit {
         this.groupServicesByCategory();
       });
   }
-  
+
   groupServicesByCategory(): void {
     this.groupedServices = this.services.reduce((acc, service) => {
-      const category = service.category; 
+      const category = service.category;
       if (!acc[category]) {
         acc[category] = [];
       }
       acc[category].push(service);
       return acc;
     }, {});
-  
+
     // console.log("Services groupés par catégorie :", this.groupedServices);
   }
 
@@ -77,24 +79,24 @@ export class VehiculeServiceComponent implements OnInit {
 
   addServicesToRendezVous() {
     // console.log("📌 Services sélectionnés :", this.selectedServices);
-  
+
     if (!this.idRdvClient || !Array.isArray(this.selectedServices) || this.selectedServices.length === 0) {
       console.warn("⚠ Aucun service sélectionné ou format incorrect !");
       return;
     }
-  
+
     this.vehiculeService.addRendezVousServices(this.idRdvClient, this.selectedServices)
       .subscribe(
         response => {
           console.log("📌 Services ajoutés avec succès :", response);
-  
-          if (this.idRdvClient) { 
+
+          if (this.idRdvClient) {
             this.selectRendezVousServices(this.idRdvClient);
           }
-  
+
           setTimeout(() => {
             const totalCost = this.getTotalCost();
-  
+
             // 4️⃣ Création du devis avec le montant total
             if (this.idRdvClient) {
               this.vehiculeService.addDevis(this.idRdvClient, totalCost)
@@ -103,13 +105,13 @@ export class VehiculeServiceComponent implements OnInit {
                   devisError => console.error("❌ Erreur lors de la création du devis :", devisError)
                 );
             }
-          }, 500); 
+          }, 500);
         },
         error => console.error("❌ Erreur lors de l'ajout des services :", error)
       );
-  }  
+  }
 
   getTotalCost(): number {
     return this.rendezVousServices.reduce((total, service) => total + (service.serviceCout || 0), 0);
-  }  
+  }
 }

@@ -69,7 +69,7 @@ exports.getAllMecaniciens = async (req, res) => {
                     ...mecanicien.toObject(),
                     specialisations: specialisations.map(spec => ({
                         id: spec._id,
-                        categorie_service: spec.id_categorie_service.description // Nom de la spécialisation
+                        categorie_service: spec.id_categorie_service ? spec.id_categorie_service.description : "Non défini"
                     }))
                 };
             })
@@ -77,10 +77,12 @@ exports.getAllMecaniciens = async (req, res) => {
 
         res.status(200).json(mecaniciensWithSpecialisations);
     } catch (error) {
-        console.error("Erreur interne serveur:", error);
+        console.error("Erreur interne serveur :", error);
         res.status(500).json({ message: "Erreur serveur", error });
     }
 };
+
+
 
 // Mettre à jour un mécanicien
 exports.updateMecanicien = async (req, res) => {
