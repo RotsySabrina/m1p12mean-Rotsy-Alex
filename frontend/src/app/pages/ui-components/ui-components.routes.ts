@@ -15,6 +15,9 @@ import { RoleGuard } from '../../auth/role.guard';
 import { VehiculeServiceComponent } from './vehicule-service/vehicule-service.component';
 import {DevisComponent} from './devis/devis.component';
 import { ServiceClientListComponent } from './service-client-list/service-client-list.component';
+import { ReparationsComponent } from './reparations/reparations.component';
+import { ReparationDetailsComponent } from './reparation-details/reparation-details.component';
+import { ReparationServiceComponent } from './reparation-service/reparation-service.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -88,6 +91,18 @@ export const UiComponentsRoutes: Routes = [
         path: 'service_client',
         component: ServiceClientListComponent
       },
+      { 
+        path: 'reparations', 
+        component: ReparationsComponent
+      },
+      { 
+        path: 'reparation/:id',
+        component: ReparationDetailsComponent
+      },
+      {
+        path: 'reparation_services',
+        component: ReparationServiceComponent
+      }
     ],
   },
 ];

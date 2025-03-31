@@ -40,9 +40,4 @@ export class DevisComponent implements OnInit {
       }
     );
   }
-
-  // updateStatus(): void{
-  //   this.devisService.updateStatus()
-  // }
-  
 }
