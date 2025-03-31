@@ -28,7 +28,7 @@ export class DevisComponent implements OnInit {
   loadDevis(): void {
     this.devisService.getDevis().subscribe(
       data => {
-        console.log('Données reçues :', data); 
+        console.log('Données devis reçues :', data); 
         if (Array.isArray(data)) {
           this.devis = data;
         } else {
