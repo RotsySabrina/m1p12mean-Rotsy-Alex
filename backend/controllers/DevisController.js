@@ -51,55 +51,60 @@ exports.calculerDevis = async (req, res) => {
 };
 
 exports.getDevisByClientId = async (req, res) => {
-    try {
-      const id_user = req.user.id;
-  
-      if (!id_user) {
-        return res.status(400).json({ message: "L'ID du client est requis" });
-      }
-  
-      const devis = await Devis.find()
-        .populate({
-          path: "id_rendez_vous_client",
-          match: { id_user: id_user },
-          populate: {
-            path: "id_user",
-            select: "nom prenom email",
-          },
-        })
-        .exec();
-  
-        const filteredDevis = devis.filter((devis) => devis.id_rendez_vous_client !== null);
+  try {
+    const id_user = req.user.id;
 
-        if (filteredDevis.length === 0) {
-          return res.status(404).json({ message: "Aucun devis trouvé pour ce client" });
-        }
-        
-        for (let i = 0; i < filteredDevis.length; i++) {
-          const devis = filteredDevis[i];
-        
-          const services = await RendezVousService.find({ id_rendez_vous_client: devis.id_rendez_vous_client._id })
-            .populate({
-              path: "id_service",
-              select: "description cout",
-            })
-            .exec();
-        
-          const devisObject = devis.toObject(); 
-          devisObject.services = services.map((s) => ({
-            description: s.id_service.description,
-            cout: s.id_service.cout,
-          }));
-        
-          filteredDevis[i] = devisObject;
-        }
-  
-      return res.status(200).json(filteredDevis);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des devis :", error);
-      return res.status(500).json({ message: "Erreur lors de la récupération des devis", error });
+    if (!id_user) {
+      return res.status(400).json({ message: "L'ID du client est requis" });
     }
-  };
+
+    // Récupérer les devis avec id_user et id_rendez_vous_client existant
+    const devis = await Devis.find()
+      .populate({
+        path: "id_rendez_vous_client",
+        match: { id_user: id_user }, // Filtrer dès la requête
+        populate: { path: "id_user", select: "nom prenom email" },
+      })
+      .lean(); // Optimisation de performance
+
+    // Filtrer uniquement les devis valides
+    const filteredDevis = devis.filter((d) => d.id_rendez_vous_client !== null);
+
+    if (filteredDevis.length === 0) {
+      return res.status(404).json({ message: "Aucun devis trouvé pour ce client" });
+    }
+
+    // Récupérer les services pour tous les rendez-vous en une seule requête
+    const rendezVousIds = filteredDevis.map((d) => d.id_rendez_vous_client._id);
+
+    const services = await RendezVousService.find({ id_rendez_vous_client: { $in: rendezVousIds } })
+      .populate({ path: "id_service", select: "description cout" })
+      .lean();
+
+    // Associer les services aux devis
+    const servicesByRdv = {};
+    services.forEach((s) => {
+      const rdvId = s.id_rendez_vous_client.toString();
+      if (!servicesByRdv[rdvId]) servicesByRdv[rdvId] = [];
+      servicesByRdv[rdvId].push({
+        id: s.id_service._id,
+        description: s.id_service.description,
+        cout: s.id_service.cout,
+      });
+    });
+
+    // Ajouter les services aux devis correspondants
+    const result = filteredDevis.map((devis) => ({
+      ...devis,
+      services: servicesByRdv[devis.id_rendez_vous_client._id.toString()] || [],
+    }));
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des devis :", error);
+    return res.status(500).json({ message: "Erreur lors de la récupération des devis", error });
+  }
+};
 
   exports.updateStatus = async (req, res) => {
     try {

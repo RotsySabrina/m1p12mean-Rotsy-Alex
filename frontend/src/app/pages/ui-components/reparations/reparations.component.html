@@ -4,14 +4,14 @@
 
         <div class="table-responsive">
             <table mat-table [dataSource]="reparations" class="w-100">
-                <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef>Nº rendez_vous</th>
-                  <td mat-cell *matCellDef="let element">{{ element.id_rendez_vous_client._id }}</td>
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Date création</th>
+                  <td mat-cell *matCellDef="let element">{{ element.createdAt | date:'dd/MM/yyyy HH:mm'}}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="mecanicien">
                     <th mat-header-cell *matHeaderCellDef> Mécanicien </th>
-                    <td mat-cell *matCellDef="let element">{{ element.date_devis}}</td>
+                    <td mat-cell *matCellDef="let element">{{ element.id_devis.id_rendez_vous_client.id_mecanicien.nom }}</td>
                   </ng-container>
               
                 <ng-container matColumnDef="status">
@@ -22,13 +22,12 @@
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Actions </th>
                     <td mat-cell *matCellDef="let reparation">
-                        <!-- <button mat-button [routerLink]="['/ui-components/service_client']" 
-                                [state]="{ services: element}">
-                        Services
-                        </button> -->
-                        <button *ngIf="reparation.status === 'en_attente'" (click)="demarrerReparation(reparation._id)">Démarrer</button>
-                        <button *ngIf="reparation.status === 'en_cours'" (click)="terminerReparation(reparation._id)">Terminer</button>
-                        <a [routerLink]="['/reparation', reparation._id]">Détails</a>
+                        <button mat-button [routerLink]="['/ui-components/reparation', reparation._id]" >
+                            Détails
+                        </button>
+                        <!-- <button *ngIf="reparation.status === 'en_attente'" (click)="demarrerReparation(reparation._id)">Démarrer</button>
+                        <button *ngIf="reparation.status === 'en_cours'" (click)="terminerReparation(reparation._id)">Terminer</button> -->
+                        <!-- <a [routerLink]="['/reparation', reparation._id]">Détails</a> -->
                     </td>
                   </ng-container>
               
