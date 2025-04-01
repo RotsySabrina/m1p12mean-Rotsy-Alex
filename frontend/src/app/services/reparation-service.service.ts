@@ -20,6 +20,6 @@ export class ReparationServiceService {
   }
 
   updateServiceStatus(idService: string, status: string, observations: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${idService}`, { status, observations });
+    return this.http.put(`${this.apiUrl}/${idService}`, { status, observations }, {headers: this.getHeaders()});
   }
 }

@@ -3,21 +3,35 @@
         <mat-card-title>Liste des Services</mat-card-title>
 
         <div class="table-responsive">
-            <table mat-table [dataSource]="services" class="w-100">
+            <table mat-table [dataSource]="reparationDetails" class="w-100">
                 <ng-container matColumnDef="service">
-                  <th mat-header-cell *matHeaderCellDef>Nº rendez_vous</th>
-                  <td mat-cell *matCellDef="let element">{{ element.id_rendez_vous_client._id }}</td>
+                  <th mat-header-cell *matHeaderCellDef>Services</th>
+                  <td mat-cell *matCellDef="let element">{{ element.id_service.description}}</td>
                 </ng-container>
               
                 <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef> Statut </th>
-                  <td mat-cell *matCellDef="let element">{{ element.status }}</td>
-                </ng-container>
+                    <th mat-header-cell *matHeaderCellDef>Statuts</th>
+                    <td mat-cell *matCellDef="let element">
+                      <mat-select [(value)]="element.status">
+                        <mat-option value="en cours">En cours</mat-option>
+                        <mat-option value="terminee">Terminée</mat-option>
+                      </mat-select>
+                    </td>
+                  </ng-container>
+                
+                  <ng-container matColumnDef="observation">
+                    <th mat-header-cell *matHeaderCellDef>Observations</th>
+                    <td mat-cell *matCellDef="let element">
+                      <input matInput [(ngModel)]="element.observations" placeholder="Ajouter une observation" />
+                    </td>
+                  </ng-container>
 
-                <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef> Actions </th>
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
                     <td mat-cell *matCellDef="let service">
-                        <button *ngIf="service.status !== 'terminee'" (click)="updateServiceStatus(service._id, 'terminee')">Terminer</button>
+                      <button mat-button color="primary" (click)="updateServiceStatus(service._id, service.status, service.observations)">
+                        Mettre à jour
+                      </button>
                     </td>
                   </ng-container>
               
