@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: m1p12mean-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run dev
+    branch: main
+    directory: backend
