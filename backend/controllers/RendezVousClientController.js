@@ -34,6 +34,26 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
 
         await RendezVousCategorieService.insertMany(catServicesAssocies);
 
+        // === CRÉER UNE NOTIFICATION POUR LE MANAGER ===
+        // const managers = await User.find({ role: "manager" });
+        // const notifications = managers.map(manager => ({
+        //     userId: manager._id,
+        //     message: `Nouveau rendez-vous de ${req.user.email} pour le ${date_heure}`
+        // }));
+
+        // await Notification.insertMany(notifications);
+
+        // // === ENVOYER LA NOTIFICATION EN TEMPS RÉEL VIA SOCKET.IO ===
+        // managers.forEach(manager => {
+        //     const managerSocketId = req.users[manager._id.toString()];
+        //     if (managerSocketId) {
+        //         req.io.to(managerSocketId).emit("newNotification", {
+        //             message: `Nouveau rendez-vous de ${req.user.email} pour le ${date_heure}`
+        //         });
+        //     }
+        // });
+        //
+
         res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
     } catch (error) {

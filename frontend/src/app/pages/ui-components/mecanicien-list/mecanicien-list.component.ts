@@ -6,6 +6,10 @@ import { CategorieServiceService } from 'src/app/services/categorie-service.serv
 import { MaterialModule } from 'src/app/material.module';
 import { AlerteService } from 'src/app/services/alerte.service';
 
+interface Specialisation {
+  categorie_service?: string; // ou un autre type selon ton modèle
+}
+
 @Component({
   selector: 'app-mecanicien-list',
   standalone: true,
@@ -17,6 +21,7 @@ import { AlerteService } from 'src/app/services/alerte.service';
   templateUrl: './mecanicien-list.component.html',
   styleUrls: ['./mecanicien-list.component.scss']
 })
+
 export class MecanicienListComponent implements OnInit {
   message: string | null = null;
   isSuccess: boolean = true;
@@ -50,9 +55,40 @@ export class MecanicienListComponent implements OnInit {
     this.getCategories();
   }
 
+  // loadMecaniciens(): void {
+  //   this.mecanicienService.getMecaniciens().subscribe(data => this.mecaniciens = data);
+  // }
+
   loadMecaniciens(): void {
-    this.mecanicienService.getMecaniciens().subscribe(data => this.mecaniciens = data);
+    this.mecanicienService.getMecaniciens().subscribe({
+      next: (data) => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          this.mecaniciens = data.map(mecanicien => {
+            // Initialisation de specialisations si non défini
+            mecanicien.specialisations = mecanicien.specialisations || []; // Si vide ou non défini
+
+            // Pour chaque spécialisation, vérifier et ajouter une valeur par défaut si nécessaire
+            mecanicien.specialisations = mecanicien.specialisations.map((spec: Specialisation) => {
+              return {
+                ...spec,
+                categorie_service: spec.categorie_service || "Non défini"
+              };
+            });
+
+            return mecanicien;
+          });
+        } else {
+          console.error("Aucun mécanicien trouvé.");
+          this.mecaniciens = [];
+        }
+      },
+      error: (err) => {
+        console.error("Erreur lors de la récupération des mécaniciens :", err);
+      }
+    });
   }
+
+
 
   getCategories(): void {
     this.categorieService.getCategories().subscribe(data => this.categories = data);
