@@ -1,3 +1,7 @@
+[build]
+  command = "npm install && npm run build:netlify"
+  publish = "dist/materialm"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
