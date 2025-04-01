@@ -1,6 +1,7 @@
 [build]
   command = "npm install && npm run build:netlify"
   publish = "dist/materialm"
+  node_version = "22.12.0"
 
 [[redirects]]
   from = "/*"

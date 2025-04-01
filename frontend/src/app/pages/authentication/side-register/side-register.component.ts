@@ -6,11 +6,12 @@ import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-side-register',
   standalone: true,
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './side-register.component.html',
   styleUrls: ['./side-register.component.css'],
 })
