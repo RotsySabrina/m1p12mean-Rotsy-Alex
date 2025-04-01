@@ -88,4 +88,10 @@ export const navItems: NavItem[] = [
     route: '/ui-components/rep_meca',
     roles: ['mecanicien'],
   },
+  {
+    displayName: 'Réparations',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/rep_manag',
+    roles: ['manager'],
+  },
 ];

@@ -6,6 +6,7 @@ const {
     getReparationsByClient,
     getReparationsByMecanicien,
     mettreAJourStatutReparation,
+    getAllReparations,
     demarrerReparation,
     terminerReparation
     } = require("../controllers/ReparationController");
@@ -14,7 +15,7 @@ router.post("/",authMiddleware, createReparation);
 router.get('/',authMiddleware, getReparationsByClient);
 router.get('/reparation_mecanicien',authMiddleware, getReparationsByMecanicien);
 router.put("/a_jour/:id_reparation",authMiddleware, mettreAJourStatutReparation);
-
+router.get("/reparations", authMiddleware, getAllReparations);
 router.put("/:id_reparation/demarrer",authMiddleware, demarrerReparation);
 router.put("/:id_reparation/terminer",authMiddleware, terminerReparation);
 

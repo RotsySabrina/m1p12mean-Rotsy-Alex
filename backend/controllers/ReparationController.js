@@ -179,22 +179,75 @@ exports.getReparationsByMecanicien = async (req, res) => {
     }
 };
 
+exports.getAllReparations = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // console.log(`🔍 Récupération de toutes les réparations (Page ${page}, Limit ${limit})`);
+        const reparations = await Reparation.find()
+            .populate('id_mecanicien', 'nom prenom')  // Récupérer le mécanicien
+            .populate({
+                path: 'id_devis',
+                populate: {
+                    path: 'id_rendez_vous_client',
+                    populate: [
+                        { path: 'id_user', select: 'nom prenom' },  // Client
+                        { path: 'id_vehicule', select: 'marque modele immatriculation annee' }  // Véhicule
+                    ]
+                }
+            })
+            .skip(skip)
+            .limit(limit);
+
+        if (reparations.length === 0) {
+            console.log("⚠️ Aucune réparation trouvée.");
+            return res.status(404).json({ message: "Aucune réparation trouvée." });
+        }
+
+        // 🔹 Reformater les réparations pour un retour structuré
+        const reparationsAvecDetails = reparations.map(rep => ({
+            _id: rep._id,
+            id_devis: rep.id_devis?._id || null,
+            montant_total: rep.id_devis?.montant_total || null,
+            date_devis: rep.id_devis?.date_devis || null,
+            status: rep.status,
+            createdAt: rep.createdAt,
+            updatedAt: rep.updatedAt,
+            mecanicien: rep.id_mecanicien || null,
+            client: rep.id_devis?.id_rendez_vous_client?.id_user || null,
+            vehicule: rep.id_devis?.id_rendez_vous_client?.id_vehicule || null
+        }));
+
+        console.log(`✅ ${reparationsAvecDetails.length} réparations récupérées avec mécanicien, client et véhicule.`);
+
+        res.json({
+            total: reparationsAvecDetails.length,
+            page,
+            limit,
+            reparations: reparationsAvecDetails
+        });
+
+    } catch (error) {
+        console.error("❌ Erreur lors de la récupération des réparations :", error);
+        res.status(500).json({ message: "Erreur serveur." });
+    }
+};
+
 exports.mettreAJourStatutReparation = async (req, res) => {
     try {
         const { id_reparation } = req.params;
 
-        // Récupérer tous les services associés à cette réparation
         const services = await ReparationService.find({ id_reparation });
 
         if (services.length === 0) {
             return res.status(404).json({ message: "Aucun service trouvé pour cette réparation." });
         }
 
-        // Vérifier les statuts des services
         const estEnCours = services.some(service => service.status === "en cours");
         const tousTermines = services.every(service => service.status === "terminee");
 
-        // Déterminer le statut de la réparation
         let nouveauStatut = "en attente";
         if (estEnCours) {
             nouveauStatut = "en cours";
@@ -202,7 +255,6 @@ exports.mettreAJourStatutReparation = async (req, res) => {
             nouveauStatut = "terminee";
         }
 
-        // Mettre à jour la réparation
         const reparation = await Reparation.findByIdAndUpdate(id_reparation, { status: nouveauStatut }, { new: true });
 
         if (!reparation) {

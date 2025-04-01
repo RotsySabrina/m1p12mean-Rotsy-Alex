@@ -3,17 +3,18 @@ import { MaterialModule } from 'src/app/material.module';
 import { ReparationService } from 'src/app/services/reparation.service';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-reparation-mecanicien',
-  imports: [MaterialModule, RouterModule, DatePipe],
-  templateUrl: './reparation-mecanicien.component.html',
-  styleUrl: './reparation-mecanicien.component.scss'
+  selector: 'app-reparation-manager',
+  imports: [MaterialModule, RouterModule, DatePipe, CommonModule],
+  templateUrl: './reparation-manager.component.html',
+  styleUrl: './reparation-manager.component.scss'
 })
-export class ReparationMecanicienComponent implements OnInit{
-  reparations: any[] = [];
+export class ReparationManagerComponent implements OnInit{
+reparations: any[] = [];
   
-  displayedColumns: string[] = ['date', 'client', 'vehicule','status', 'actions'];
+  displayedColumns: string[] = ['date', 'client', 'vehicule','mecanicien','status', 'devis','actions'];
   
     constructor(
       private reparationService: ReparationService
@@ -26,7 +27,7 @@ export class ReparationMecanicienComponent implements OnInit{
     loadReparations(): void {
       console.log("🔄 Chargement des réparations...");
     
-      this.reparationService.getReparationsMecaniciens().subscribe(
+      this.reparationService.getReparations().subscribe(
         data => {
           console.log("📩 Données reçues de l'API:", data);
     

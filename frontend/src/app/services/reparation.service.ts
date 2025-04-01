@@ -32,6 +32,10 @@ export class ReparationService {
     return this.http.put(`${this.apiUrl}/a_jour/${id_reparation}`, {},{headers: this.getHeaders()});
   }
 
+  getReparations(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/reparations`, {headers: this.getHeaders()});
+  }
+
   // Démarrer une réparation
   demarrerReparation(idReparation: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/${idReparation}/demarrer`, {});

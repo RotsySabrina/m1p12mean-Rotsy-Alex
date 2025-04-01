@@ -19,6 +19,8 @@ import { ReparationsComponent } from './reparations/reparations.component';
 import { ReparationDetailsComponent } from './reparation-details/reparation-details.component';
 import { ReparationServiceComponent } from './reparation-service/reparation-service.component';
 import { ReparationMecanicienComponent } from './reparation-mecanicien/reparation-mecanicien.component';
+import {ReparationManagerComponent} from './reparation-manager/reparation-manager.component';
+import { ReparationDetailManagerComponent } from './reparation-detail-manager/reparation-detail-manager.component';
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -109,6 +111,18 @@ export const UiComponentsRoutes: Routes = [
         component: ReparationMecanicienComponent,
         canActivate: [RoleGuard],
         data: { role: 'mecanicien' }
+      },
+      {
+        path: 'rep_manag',
+        component: ReparationManagerComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }
+      },
+      {
+        path: 'rep_manag_detail/:id',
+        component: ReparationDetailManagerComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'manager' }
       },
     ],
   },
