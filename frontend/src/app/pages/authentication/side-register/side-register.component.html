@@ -17,8 +17,9 @@
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <mat-label>Nom</mat-label>
               <input matInput formControlName="nom" />
-              <mat-error *ngIf="f.nom?.invalid && f.nom?.touched">
-                Le nom est requis (minimum 3 caractères)
+              <!-- <mat-error *ngIf="f.nom?.invalid && f.nom?.touched"> -->
+              <mat-error *ngIf="form.controls['nom']?.invalid && form.controls['nom']?.touched"></mat-error>
+              Le nom est requis (minimum 3 caractères)
               </mat-error>
             </mat-form-field>
 
@@ -26,8 +27,9 @@
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <mat-label>Prénom</mat-label>
               <input matInput formControlName="prenom" />
-              <mat-error *ngIf="f.prenom?.invalid && f.prenom?.touched">
-                Le prénom est requis (minimum 3 caractères)
+              <!-- <mat-error *ngIf="f.prenom?.invalid && f.prenom?.touched"> -->
+              <mat-error *ngIf="form.controls['prenom']?.invalid && form.controls['prenom']?.touched"></mat-error>
+              Le prénom est requis (minimum 3 caractères)
               </mat-error>
             </mat-form-field>
 
@@ -35,8 +37,9 @@
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <mat-label>Email</mat-label>
               <input matInput type="email" formControlName="email" />
-              <mat-error *ngIf="f.email?.invalid && f.email?.touched">
-                Un email valide est requis
+              <!-- <mat-error *ngIf="f.email?.invalid && f.email?.touched"> -->
+              <mat-error *ngIf="form.controls['email']?.invalid && form.controls['email']?.touched"></mat-error>
+              Un email valide est requis
               </mat-error>
             </mat-form-field>
 
@@ -44,8 +47,10 @@
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <mat-label>Mot de passe</mat-label>
               <input matInput type="password" formControlName="mot_de_passe" />
-              <mat-error *ngIf="f.mot_de_passe?.invalid && f.mot_de_passe?.touched">
-                Le mot de passe doit contenir au moins 6 caractères
+              <!-- <mat-error *ngIf="f.mot_de_passe?.invalid && f.mot_de_passe?.touched"> -->
+              <mat-error
+                *ngIf="form.controls['mot_de_passe']?.invalid && form.controls['mot_de_passe']?.touched"></mat-error>
+              Le mot de passe doit contenir au moins 6 caractères
               </mat-error>
             </mat-form-field>
 
