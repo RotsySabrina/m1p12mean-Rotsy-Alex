@@ -1,0 +1,37 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <mat-card-title>Liste des Factures</mat-card-title>
+
+        <div class="table-responsive">
+            <table mat-table [dataSource]="factures" class="w-100">
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Date facture</th>
+                  <td mat-cell *matCellDef="let element">{{ element.date_facturation | date:'dd/MM/yyyy HH:mm'}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="id_rdv">
+                    <th mat-header-cell *matHeaderCellDef> Nº Rendez-vous </th>
+                    <td mat-cell *matCellDef="let element">{{ element.id_devis.id_rendez_vous_client }}</td>
+                  </ng-container>
+              
+                <ng-container matColumnDef="total">
+                  <th mat-header-cell *matHeaderCellDef> Total </th>
+                  <td mat-cell *matCellDef="let element">{{ element.total }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Actions </th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-button [routerLink]="['/ui-components/facture_detail']" [state]="{ factures: element}">
+                            Détails
+                        </button>
+                    </td>
+                  </ng-container>
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>              
+
+        </div>
+    </mat-card-content>
+</mat-card>

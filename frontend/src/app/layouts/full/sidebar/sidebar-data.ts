@@ -90,8 +90,14 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Réparations',
-    iconName: 'solar:tablet-line-duotone',
+    iconName: 'solar:settings-line-duotone',
     route: '/ui-components/rep_manag',
     roles: ['manager'],
+  },
+  {
+    displayName: 'Factures',
+    iconName: 'solar:tablet-line-duotone',
+    route: '/ui-components/facture',
+    roles: ['client'],
   },
 ];

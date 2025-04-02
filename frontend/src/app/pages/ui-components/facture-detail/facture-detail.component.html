@@ -1,0 +1,52 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <div id="facturePDF" class="facture-container">
+            
+            <!-- EN-TÊTE FACTURE -->
+            <div class="facture-header">
+                <h2>FACTURE</h2>
+                <p><strong>N° Facture :</strong> {{ facture?._id }}</p>
+                <p><strong>Date :</strong> {{ facture?.date_facturation | date:'dd/MM/yyyy' }}</p>
+            </div>
+
+            <!-- INFORMATIONS CLIENT -->
+            <div class="facture-client">
+                <p><strong>Client :</strong> {{ facture?.id_client.nom }} {{ facture?.id_client.prenom }}</p>
+                <p><strong>Email :</strong> {{ facture?.id_client.email }}</p>
+                <p><strong>N° Rendez-vous :</strong> {{ facture?.id_devis.id_rendez_vous_client }}</p>
+            </div>
+
+            <!-- TABLEAU DES SERVICES -->
+            <div class="table-responsive">
+                <table mat-table [dataSource]="facture?.services" class="w-100">
+                    <ng-container matColumnDef="service">
+                        <th mat-header-cell *matHeaderCellDef> Service </th>
+                        <td mat-cell *matCellDef="let service">{{ service.nom_service }}</td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="cout">
+                        <th mat-header-cell *matHeaderCellDef> Coût </th>
+                        <td mat-cell *matCellDef="let service">{{ service.prix | number }} Ar</td>
+                    </ng-container>
+                
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table> 
+            </div>  
+
+            <!-- TOTAL ET SIGNATURE -->
+            <div class="facture-total">
+                <p><strong>Total :</strong> {{ total | number }} Ar</p>
+            </div>
+
+            <div class="facture-signature">
+                <p>Signature du client : ___________________</p>
+            </div>
+
+        </div> <!-- FIN FACTUREPDF -->
+
+        <button mat-raised-button color="primary" (click)="exporterPDF()">
+            Exporter en PDF
+        </button>
+    </mat-card-content>
+</mat-card>

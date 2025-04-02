@@ -55,7 +55,7 @@ exports.getReparationsByClient = async (req, res) => {
         }
 
         const id_user = req.user.id;
-        console.log(`🔍 Recherche des réparations pour le client : ${id_user}`);
+        // console.log(`🔍 Recherche des réparations pour le client : ${id_user}`);
 
         // Récupération des paramètres de pagination
         const page = parseInt(req.query.page) || 1;
@@ -125,7 +125,7 @@ exports.getReparationsByMecanicien = async (req, res) => {
         }
 
         const id_user = req.user.id;
-        console.log(`🔍 Recherche des réparations pour le mécanicien : ${id_user}`);
+        // console.log(`🔍 Recherche des réparations pour le mécanicien : ${id_user}`);
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -164,7 +164,7 @@ exports.getReparationsByMecanicien = async (req, res) => {
             vehicule: rep.id_devis.id_rendez_vous_client?.id_vehicule || null
         }));
 
-        console.log(`✅ ${reparationsAvecDetails.length} réparations trouvées avec client et véhicule.`);
+        // console.log(`✅ ${reparationsAvecDetails.length} réparations trouvées avec client et véhicule.`);
 
         res.json({
             total: reparationsAvecDetails.length,
@@ -219,9 +219,7 @@ exports.getAllReparations = async (req, res) => {
             client: rep.id_devis?.id_rendez_vous_client?.id_user || null,
             vehicule: rep.id_devis?.id_rendez_vous_client?.id_vehicule || null
         }));
-
-        console.log(`✅ ${reparationsAvecDetails.length} réparations récupérées avec mécanicien, client et véhicule.`);
-
+        // console.log(`✅ ${reparationsAvecDetails.length} réparations récupérées avec mécanicien, client et véhicule.`);
         res.json({
             total: reparationsAvecDetails.length,
             page,
@@ -239,35 +237,47 @@ exports.mettreAJourStatutReparation = async (req, res) => {
     try {
         const { id_reparation } = req.params;
 
+        // Récupérer tous les services liés à cette réparation
         const services = await ReparationService.find({ id_reparation });
 
         if (services.length === 0) {
             return res.status(404).json({ message: "Aucun service trouvé pour cette réparation." });
         }
 
+        // Vérifier les statuts des services
         const estEnCours = services.some(service => service.status === "en cours");
         const tousTermines = services.every(service => service.status === "terminee");
 
         let nouveauStatut = "en attente";
-        if (estEnCours) {
-            nouveauStatut = "en cours";
-        } else if (tousTermines) {
+        if (tousTermines) {
             nouveauStatut = "terminee";
+        } else if (estEnCours) {
+            nouveauStatut = "en cours";
         }
 
-        const reparation = await Reparation.findByIdAndUpdate(id_reparation, { status: nouveauStatut }, { new: true });
+        // Mettre à jour le statut de la réparation
+        const reparation = await Reparation.findByIdAndUpdate(
+            id_reparation, 
+            { status: nouveauStatut }, 
+            { new: true }
+        ).populate("id_devis"); // Peupler id_devis pour récupérer les informations du devis
 
         if (!reparation) {
-            return res.status(404).json({ message: "Réparation non trouvée" });
+            return res.status(404).json({ message: "Réparation non trouvée." });
         }
 
-        res.json({ message: "Statut de la réparation mis à jour", reparation });
+        // Si la réparation est terminée, renvoyer aussi l'id_devis pour générer la facture
+        res.json({ 
+            message: "Statut de la réparation mis à jour.", 
+            status: reparation.status,
+            id_devis: reparation.id_devis ? reparation.id_devis._id : null 
+        });
+
     } catch (error) {
-        console.error("Erreur mise à jour statut réparation:", error);
-        res.status(500).json({ message: "Erreur serveur" });
+        console.error("❌ Erreur mise à jour statut réparation :", error);
+        res.status(500).json({ message: "Erreur serveur." });
     }
 };
-
 
 exports.demarrerReparation = async (req, res) => {
     try {

@@ -4,6 +4,7 @@ import { ReparationServiceService } from 'src/app/services/reparation-service.se
 import { ReparationService } from 'src/app/services/reparation.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import {FactureService} from 'src/app/services/facture.service';
 
 @Component({
   selector: 'app-reparation-service',
@@ -20,7 +21,8 @@ export class ReparationServiceComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private reparationService: ReparationServiceService,
-    private reparation: ReparationService
+    private reparation: ReparationService,
+    private facture: FactureService
   ) {}
 
   ngOnInit(): void {
@@ -46,23 +48,36 @@ export class ReparationServiceComponent implements OnInit {
   updateServiceStatus(idService: string, status: string, observations: string): void {
     this.reparationService.updateServiceStatus(idService, status, observations).subscribe(
       () => {
-        console.log("Statut du service mis à jour avec succès !");
-        
-        // Après mise à jour d'un service, mettre à jour le statut de la réparation
+        console.log("✅ Statut du service mis à jour avec succès !");
+
+        // Vérifier si la réparation est complètement terminée
         if (this.idReparation) {
           this.reparation.mettreAJourStatutReparation(this.idReparation).subscribe(
-            () => {
-              console.log("Statut de la réparation mis à jour !");
-              // this.getDetailReparation(this.idReparation); // Rafraîchir les données
+            (response) => {
+              console.log("✅ Statut de la réparation mis à jour !", response);
+
+              if (response.status === "terminee" && response.id_devis) {
+                console.log("📄 Génération de la facture...");
+                
+                this.facture.genereFacture(response.id_devis).subscribe(
+                  (facture) => {
+                    console.log("✅ Facture générée avec succès :", facture);
+                    // alert("Facture générée avec succès !");
+                  },
+                  (error) => {
+                    console.error("❌ Erreur lors de la génération de la facture :", error);
+                  }
+                );
+              }
             },
             (error) => {
-              console.error("Erreur mise à jour statut réparation :", error);
+              console.error("❌ Erreur mise à jour statut réparation :", error);
             }
           );
         }
       },
       (error) => {
-        console.error("Erreur lors de la mise à jour du statut du service :", error);
+        console.error("❌ Erreur lors de la mise à jour du statut du service :", error);
       }
     );
   }  
