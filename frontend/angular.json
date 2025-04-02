@@ -103,6 +103,14 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@netlify-builder/deploy:deploy",
+          "options": {
+            "outputPath": "dist/materialm/browser",
+            "netlifyToken": "nfp_d3Yx166U2rEhByTMLWo3E6W7kg6arzoL013d",
+            "siteId": "5e206355-4970-4639-b863-5b51692d94b9"
+          }
         }
       }
     }

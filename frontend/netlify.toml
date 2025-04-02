@@ -1,11 +1,9 @@
 [build]
-  base = "frontend"
   command = "npm install && npm run build --prod"
   publish = "frontend/dist/materialm/browser"
 
 [functions]
   directory = "frontend/netlify/functions"
-  
 [[redirects]]
   from = "/*"
   to = "/index.html"

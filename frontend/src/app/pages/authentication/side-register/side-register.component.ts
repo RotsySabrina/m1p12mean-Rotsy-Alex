@@ -23,7 +23,7 @@ export class AppSideRegisterComponent implements OnInit {
     private settings: CoreService,
     private authService: AuthentificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -34,7 +34,7 @@ export class AppSideRegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(6),
       ]),
-      role: new FormControl('', [Validators.required]),
+      role: new FormControl('client', [Validators.required]),
     });
   }
 
