@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
-
+import { NotificationService } from 'src/app/services/notification.service';
 @Component({
   selector: 'app-rendez-vous-client',
   standalone: true,
@@ -48,7 +48,8 @@ export class RendezVousClientComponent implements OnInit {
     private categorieService: CategorieServiceService,
     private vehiculeService: VehiculeService,
     private creneauxService: CreneauxServiceService,
-    private alerteService: AlerteService
+    private alerteService: AlerteService,
+    private notificationService: NotificationService
   ) {
     this.alerteService.message$.subscribe(msg => {
       this.message = msg;

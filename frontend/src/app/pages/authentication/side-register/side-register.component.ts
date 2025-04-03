@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './side-register.component.html',
-  styleUrls: ['./side-register.component.css'],
+  // styleUrls: ['./side-register.component.css'],
 })
 export class AppSideRegisterComponent implements OnInit {
   options = this.settings.getOptions();
