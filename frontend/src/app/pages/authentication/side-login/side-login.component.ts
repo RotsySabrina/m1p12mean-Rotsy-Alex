@@ -10,7 +10,7 @@ import { MaterialModule } from 'src/app/material.module';
   selector: 'app-side-login',
   standalone: true, // Ajout de `standalone: true`
   templateUrl: './side-login.component.html',
-  styleUrls: ['./side-login.component.css'],
+  // styleUrls: ['./side-login.component.css'],
   imports: [
     CommonModule,
     ReactiveFormsModule,

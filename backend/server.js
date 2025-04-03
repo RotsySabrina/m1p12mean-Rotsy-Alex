@@ -36,6 +36,7 @@ app.use("/api/rdv_services", require("./routes/RendezVousServiceRoutes"));
 app.use("/api/reparations", require("./routes/ReparationRoutes"));
 app.use("/api/reparation_services", require("./routes/ReparationServiceRoutes"));
 app.use("/api/facture", require("./routes/FactureRoutes"));
+app.use("/api/notifications", require("./routes/NotificationRoutes"));
 
 app.listen(PORT, () => { console.log(`Serveur en cours sur http://localhost:${PORT}`); });
 

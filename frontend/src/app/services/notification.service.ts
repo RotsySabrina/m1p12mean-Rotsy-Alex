@@ -1,28 +1,34 @@
 import { Injectable } from '@angular/core';
-import { io } from 'socket.io-client';
-import { BehaviorSubject } from 'rxjs';
-// import { environment } from 'src/environments/environment';
-import { environment } from 'src/environments/environment.prod';
-
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment.prod';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private socket = io(`${environment.apiUrl}`); 
-  private notifications$ = new BehaviorSubject<string[]>([]);
+  private apiUrl = `${environment.apiUrl}/api/notifications`;
+  constructor(private http: HttpClient) { }
 
-  constructor() { }
-
-  connect(userId: string) {
-    this.socket.emit('join', userId);
-    this.socket.on('newNotification', (notification: any) => {
-      this.notifications$.next([...this.notifications$.value, notification.message]);
-    });
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 
-  getNotifications() {
-    return this.notifications$.asObservable();
+  // Récupérer les notifications non lues
+  getUnreadNotifications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/unread`, { headers: this.getHeaders() })
+      .pipe(
+        tap(notifications => {
+          console.log('Notifications non lues:', notifications);
+        })
+      );
+  }
+
+  // Marquer les notifications comme lues
+  markNotificationsAsRead(): Observable<any> {
+    return this.http.put(`${this.apiUrl}/mark-as-read`, {}, { headers: this.getHeaders() });
   }
 }
-

@@ -13,6 +13,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
+import { NotificationService } from 'src/app/services/notification.service';
 @Component({
   selector: 'app-rendez-vous-client',
   standalone: true,
@@ -59,7 +60,8 @@ export class RendezVousClientComponent implements OnInit {
     private categorieService: CategorieServiceService,
     private vehiculeService: VehiculeService,
     private creneauxService: CreneauxServiceService,
-    private alerteService: AlerteService
+    private alerteService: AlerteService,
+    private notificationService: NotificationService
   ) {
     this.alerteService.message$.subscribe(msg => {
       this.message = msg;
