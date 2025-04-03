@@ -47,29 +47,29 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
         }));
 
         await RendezVousCategorieService.insertMany(catServicesAssocies);
-        console.log("✅ Services associés au rendez-vous");
+        console.log("Services associés au rendez-vous");
 
         // 🔹 Ajout de la notification pour le manager
         console.log("🔍 Recherche du manager...");
         const manager = await User.findOne({ role: "manager" });
 
         if (manager) {
-            console.log("📢 Notification envoyée au manager :", manager);
+            console.log("Notification envoyée au manager :", manager);
             const newNotification = new Notification({
                 userId: manager._id,
                 message: `Nouveau rendez-vous prévu le ${date_heure} pour le véhicule ${id_vehicule}.`,
             });
 
             await newNotification.save();
-            console.log("✅ Notification enregistrée");
+            console.log("Notification enregistrée");
         } else {
-            console.log("⚠️ Aucun manager trouvé !");
+            console.log("Aucun manager trouvé !");
         }
 
         res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
     } catch (error) {
-        console.log("❌ Erreur lors de l'ajout du rendez-vous :", error);
+        console.log("Erreur lors de l'ajout du rendez-vous :", error);
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
