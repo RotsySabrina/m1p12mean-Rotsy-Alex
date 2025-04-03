@@ -6,19 +6,30 @@ const User = require("../models/User");
 
 exports.createRendezVousWithCategorieServices = async (req, res) => {
     try {
+        console.log("🔹 Début de la création du rendez-vous");
+
         const { id_vehicule, date_heure, catServices } = req.body;
+        console.log("📩 Données reçues :", { id_vehicule, date_heure, catServices });
 
         if (!id_vehicule || !date_heure || !catServices || catServices.length === 0) {
+            console.log("⚠️ Données invalides !");
             return res.status(400).json({ message: "id_vehicule, date_heure et catServices sont requis" });
         }
 
+        console.log("🔍 Recherche des catégories de services...");
         const services = await CategorieService.find({ _id: { $in: catServices } });
+
+        console.log("✅ Services trouvés :", services);
+
         if (services.length !== catServices.length) {
+            console.log("❌ Erreur : Un ou plusieurs services n'existent pas");
             return res.status(400).json({ message: "Un ou plusieurs services sélectionnés n'existent pas" });
         }
 
         let duree_totale = services.reduce((sum, service) => sum + service.duree, 0);
+        console.log("🕒 Durée totale calculée :", duree_totale);
 
+        console.log("📝 Création du rendez-vous...");
         const newRdv = new RendezVousClient({
             id_user: req.user.id,
             id_vehicule,
@@ -27,30 +38,42 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
         });
 
         const savedRdv = await newRdv.save();
+        console.log("✅ Rendez-vous enregistré :", savedRdv);
 
+        console.log("🔗 Association des services au rendez-vous...");
         const catServicesAssocies = services.map(service => ({
             id_rendez_vous_client: savedRdv._id,
             id_categorie_service: service._id
         }));
 
         await RendezVousCategorieService.insertMany(catServicesAssocies);
+        console.log("✅ Services associés au rendez-vous");
 
         // 🔹 Ajout de la notification pour le manager
-        const manager = await User.find({ role: "manager" }); // Trouver le manager
+        console.log("🔍 Recherche du manager...");
+        const manager = await User.findOne({ role: "manager" });
+
         if (manager) {
+            console.log("📢 Notification envoyée au manager :", manager);
             const newNotification = new Notification({
                 userId: manager._id,
                 message: `Nouveau rendez-vous prévu le ${date_heure} pour le véhicule ${id_vehicule}.`,
             });
+
             await newNotification.save();
+            console.log("✅ Notification enregistrée");
+        } else {
+            console.log("⚠️ Aucun manager trouvé !");
         }
 
         res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
     } catch (error) {
+        console.log("❌ Erreur lors de l'ajout du rendez-vous :", error);
         res.status(500).json({ message: "Erreur lors de l'ajout du rendez-vous", error });
     }
 };
+
 
 exports.getRendezVousByClientWithCategorieServices = async (req, res) => {
     try {
