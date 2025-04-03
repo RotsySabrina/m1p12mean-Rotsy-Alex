@@ -17,6 +17,7 @@ export class ServiceClientListComponent implements OnInit{
   total :number = 0;
   idDevis: string = '';
   idMecanicien: string = '';
+  status: string = '';
 
   displayedColumns: string[] = ['service', 'cout'];
 
@@ -39,9 +40,11 @@ export class ServiceClientListComponent implements OnInit{
       if (montant_total && montant_total.$numberDecimal) {
         this.total = parseFloat(montant_total.$numberDecimal);
       }
+      this.status = history.state.services.status || '';
     } else {
       this.services = [];
       this.total = 0;
+      this.status = '';
     }
     // console.log("ID Devis :", this.idDevis);
     console.log("Venant Devis :", history.state.services);

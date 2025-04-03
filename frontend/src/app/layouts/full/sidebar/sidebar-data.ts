@@ -28,21 +28,21 @@ export const navItems: NavItem[] = [
     route: '/ui-components/manager_rdv',
     roles: ['manager'],
   },
-  {
-    displayName: 'Mécanicien disponible',
-    iconName: 'solar:user-line-duotone', // Icône par défaut compatible
-    route: '/ui-components/meca_dispo',
-    roles: ['manager'],
-  },
+  // {
+  //   displayName: 'Mécanicien disponible',
+  //   iconName: 'solar:user-line-duotone', // Icône par défaut compatible
+  //   route: '/ui-components/meca_dispo',
+  //   roles: ['manager'],
+  // },
   {
     displayName: 'Créneaux',
-    iconName: 'solar:clock-line-duotone', // Icône générique pour l'heure
+    iconName: 'solar:alarm-line-duotone', 
     route: '/ui-components/creneaux',
     roles: ['manager'],
   },
   {
-    displayName: 'Rendez-vous client',
-    iconName: 'solar:calendar-event-line-duotone', // Icône par défaut pour un RDV
+    displayName: 'Rendez-vous',
+    iconName: 'solar:calendar-line-duotone',
     route: '/ui-components/rendez_vous_client',
     roles: ['client'],
   },
@@ -54,7 +54,7 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Véhicule',
-    iconName: 'solar:car-line-duotone', // Icône par défaut pour un véhicule
+    iconName: 'solar:bus-line-duotone', 
     route: '/ui-components/vehicules',
     roles: ['client'],
   },
@@ -72,19 +72,19 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Devis',
-    iconName: 'solar:tablet-line-duotone',
+    iconName: 'solar:file-text-line-duotone',
     route: '/ui-components/devis',
     roles: ['client'],
   },
   {
     displayName: 'Réparations',
-    iconName: 'solar:tablet-line-duotone',
+    iconName: 'solar:settings-line-duotone',
     route: '/ui-components/reparations',
     roles: ['client'],
   },
   {
     displayName: 'Réparations',
-    iconName: 'solar:tablet-line-duotone',
+    iconName: 'solar:settings-line-duotone',
     route: '/ui-components/rep_meca',
     roles: ['mecanicien'],
   },
@@ -96,7 +96,7 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Factures',
-    iconName: 'solar:tablet-line-duotone',
+    iconName: 'solar:bill-line-duotone',
     route: '/ui-components/facture',
     roles: ['client'],
   },

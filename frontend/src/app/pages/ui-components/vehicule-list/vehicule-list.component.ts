@@ -1,15 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { VehiculeService } from 'src/app/services/vehicule.service';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
+import { MatTableDataSource } from '@angular/material/table';
+import { CustomPaginator } from 'src/app/custom-paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-vehicule-list',
   imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './vehicule-list.component.html',
-  styleUrl: './vehicule-list.component.scss'
+  styleUrls: ['./vehicule-list.component.scss','../facture/facture.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: CustomPaginator }]
 })
 export class VehiculeListComponent implements OnInit {
 
@@ -20,6 +26,11 @@ export class VehiculeListComponent implements OnInit {
   displayedColumns: string[] = ['marque', 'modele', 'immatriculation', 'annee', 'actions'];
   newVehicule = { marque: '', modele: '', immatriculation: '', annee: '' };
   editedVehicule: any = null; // Stocke le service en cours d'édition
+
+  dataSource = new MatTableDataSource<any>([]); 
+    
+        @ViewChild(MatPaginator) paginator!: MatPaginator;
+        @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private vehiculeService: VehiculeService, private alerteService: AlerteService) {
     this.alerteService.message$.subscribe(msg => {
@@ -36,10 +47,28 @@ export class VehiculeListComponent implements OnInit {
   ngOnInit(): void {
     this.loadVehicules();
   }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }
 
   loadVehicules(): void {
-    this.vehiculeService.getVehicules().subscribe(data => this.vehicules =
-      data);
+    this.vehiculeService.getVehicules().subscribe(data => {
+      this.vehicules = data;
+      this.dataSource.data = this.vehicules; // Mettre à jour la dataSource après la récupération des données
+      
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+    });
+  }  
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   deleteVehicule(id: string): void {

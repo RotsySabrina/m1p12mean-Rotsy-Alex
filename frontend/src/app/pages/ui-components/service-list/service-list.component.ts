@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,ViewChild} from '@angular/core';
 import { ServiceService } from '../../../services/service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CategorieServiceService } from '../../../services/categorie-service.service';
 import { MaterialModule } from 'src/app/material.module';
 import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
+import { MatTableDataSource } from '@angular/material/table';
+import { CustomPaginator } from 'src/app/custom-paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-service-list',
@@ -14,7 +19,8 @@ import { AlerteService } from '../../../services/alerte.service';  // Ajout du s
     MaterialModule
   ],
   templateUrl: './service-list.component.html',
-  styleUrl: './service-list.component.css'
+  styleUrls: ['./service-list.component.css','../facture/facture.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: CustomPaginator }]
 })
 
 export class ServiceListComponent implements OnInit {
@@ -25,6 +31,11 @@ export class ServiceListComponent implements OnInit {
   categories: any[] = [];
   displayedColumns: string[] = ['categorie', 'description', 'cout', 'actions'];
   newService = { description: '', cout: '', id_categorie_service: '' };
+
+  dataSource = new MatTableDataSource<any>([]); 
+       
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
+    @ViewChild(MatSort) sort!: MatSort;
 
   editedService: any = null; // Stocke le service en cours d'édition
 
@@ -47,10 +58,49 @@ export class ServiceListComponent implements OnInit {
   ngOnInit(): void {
     this.loadServices();
     this.getCategories();
+    
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const transformedFilter = filter.trim().toLowerCase();
+  
+      return (
+        data.id_categorie_service.description.toLowerCase().includes(transformedFilter) || // Recherche sur la catégorie
+        data.description.toLowerCase().includes(transformedFilter) || // Recherche sur la description
+        data.cout.toString().includes(transformedFilter) // Recherche sur le coût
+      );
+    };
+  }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   loadServices(): void {
-    this.serviceService.getServices().subscribe(data => this.services = data)
+    this.serviceService.getServices().subscribe(
+      data =>{
+      if (data) {
+        this.services = data;
+        this.dataSource.data = this.services;
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        });
+        
+        this.dataSource.sort = this.sort;
+        console.log("✅ services chargées avec succès:", this.services);
+      } else {
+        console.warn("⚠️ Aucune réparation trouvée dans la réponse.");
+      }
+    },
+    error => {
+      console.error("❌ Erreur lors du chargement des services:", error);
+    }
+  );
+  }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   getCategories(): void {

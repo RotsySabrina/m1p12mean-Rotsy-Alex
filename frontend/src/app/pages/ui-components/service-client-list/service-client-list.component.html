@@ -21,7 +21,7 @@
               <div class="total-cost">
                 <p><strong>Total :</strong> {{ total | number }} Ar</p>
               </div>             
-              <div class="button-container">
+              <div class="button-container" *ngIf="status !== 'accepte' && status !== 'refuse'">
                 <button mat-button color="primary" (click)="updateStatus('accepte')">
                   Valider
                 </button>

@@ -1,15 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,ViewChild} from '@angular/core';
 import { CategorieServiceService } from '../../../services/categorie-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { AlerteService } from 'src/app/services/alerte.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { CustomPaginator } from 'src/app/custom-paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-categorie-service-list',
   imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './categorie-service-list.component.html',
-  styleUrl: './categorie-service-list.component.css'
+  styleUrls: ['./categorie-service-list.component.css','../facture/facture.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: CustomPaginator }]
 })
 export class CategorieServiceListComponent implements OnInit {
 
@@ -21,6 +27,11 @@ export class CategorieServiceListComponent implements OnInit {
   categories: any[] = [];
 
   editedCategorie: any = null;
+
+  dataSource = new MatTableDataSource<any>([]); 
+         
+      @ViewChild(MatPaginator) paginator!: MatPaginator;
+      @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private categorieService: CategorieServiceService,
     private alerteService: AlerteService) {
@@ -38,10 +49,38 @@ export class CategorieServiceListComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
   }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }
 
   loadCategories(): void {
-    this.categorieService.getCategories().subscribe(data => this.categories =
-      data);
+    this.categorieService.getCategories().subscribe(
+      data => {
+        if (data) {
+          this.categories =data;
+          this.dataSource.data = this.categories;
+          setTimeout(() => {
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          });
+          
+          this.dataSource.sort = this.sort;
+          console.log("✅ categorie services chargées avec succès:", this.categories);
+        } else {
+          console.warn("⚠️ Aucune réparation trouvée dans la réponse.");
+        }
+      },
+      error => {
+        console.error("❌ Erreur lors du chargement des categorie services:", error);
+      });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   deleteCategorie(id: string): void {

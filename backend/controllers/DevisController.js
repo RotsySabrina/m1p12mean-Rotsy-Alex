@@ -62,7 +62,7 @@ exports.getDevisByClientId = async (req, res) => {
     const devis = await Devis.find()
       .populate({
         path: "id_rendez_vous_client",
-        match: { id_user: id_user }, // Filtrer dès la requête
+        match: { id_user: id_user }, 
         populate: { path: "id_user", select: "nom prenom email" },
       })
       .lean(); // Optimisation de performance

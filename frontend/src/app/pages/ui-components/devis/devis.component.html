@@ -1,27 +1,36 @@
 <mat-card class="cardWithShadow">
     <mat-card-content>
-        <mat-card-title>Liste des Services</mat-card-title>
+        <mat-card-title>Liste des Devis</mat-card-title>
+        <!-- Barre de recherche -->
+        <div class="search-bar">
+          <mat-form-field appearance="outline">
+            <mat-label>Rechercher</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Devis">
+            <button mat-icon-button matSuffix aria-label="Rechercher">
+              <mat-icon>search</mat-icon> <!-- Icône de recherche -->
+            </button>
+          </mat-form-field>
+        </div>
 
         <div class="table-responsive">
-            <table mat-table [dataSource]="devis" class="w-100">
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
                 <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef>Nº rendez_vous</th>
+                  <th mat-header-cell *matHeaderCellDef>Nº rendez-vous</th>
                   <td mat-cell *matCellDef="let element">{{ element.id_rendez_vous_client._id }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="date_devis">
-                    <th mat-header-cell *matHeaderCellDef> Date devis </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date devis </th>
                     <td mat-cell *matCellDef="let element">{{ element.date_devis | date:'dd/MM/yyyy HH:mm' }}</td>
                   </ng-container>
               
-                <ng-container matColumnDef="vehicule">
+                <!-- <ng-container matColumnDef="vehicule">
                   <th mat-header-cell *matHeaderCellDef> Véhicule </th>
-                  <!-- <td mat-cell *matCellDef="let element">{{ element.id_vehicule.marque }} {{ element.id_vehicule.modele }} ({{ element.id_vehicule.immatriculation }}) {{ element.id_vehicule.annee }}</td> -->
                   <td mat-cell *matCellDef="let element">{{ element.vehicule}}</td>
-                </ng-container>
+                </ng-container> --> 
               
                 <ng-container matColumnDef="montant_total">
-                  <th mat-header-cell *matHeaderCellDef> Montant Total </th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Montant Total </th>
                   <td mat-cell *matCellDef="let element">{{ element.montant_total.$numberDecimal | number}} Ar</td>
                 </ng-container>
               
@@ -44,7 +53,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
               </table>              
-
+            <mat-paginator [pageSize]="5" [hidePageSize]="true"></mat-paginator>
         </div>
     </mat-card-content>
 </mat-card>
