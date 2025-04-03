@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { RendezVousClientService } from 'src/app/services/rendez-vous-client.service';
 import { CategorieServiceService } from 'src/app/services/categorie-service.service';
 import { VehiculeService } from 'src/app/services/vehicule.service';
@@ -7,7 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { AlerteService } from '../../../services/alerte.service';  // Ajout du service d'alerte
+import { MatTableDataSource } from '@angular/material/table';
+import { CustomPaginator } from 'src/app/custom-paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
+import { NotificationService } from 'src/app/services/notification.service';
 @Component({
   selector: 'app-rendez-vous-client',
   standalone: true,
@@ -17,7 +23,8 @@ import { AlerteService } from '../../../services/alerte.service';  // Ajout du s
     MaterialModule
   ],
   templateUrl: './rendez-vous-client.component.html',
-  styleUrls: ['./rendez-vous-client.component.scss']
+  styleUrls: ['./rendez-vous-client.component.scss','../facture/facture.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: CustomPaginator }]
 })
 export class RendezVousClientComponent implements OnInit {
 
@@ -35,6 +42,11 @@ export class RendezVousClientComponent implements OnInit {
   selectedCreneau!: string;
   displayedColumns: string[] = ['vehicule', 'categorieServices', 'date_heure', 'duree', 'status'];
 
+  dataSource = new MatTableDataSource<any>([]); 
+  
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
+    @ViewChild(MatSort) sort!: MatSort;
+
   newRendezVousClient = {
     id_vehicule: '',
     date_heure: '',
@@ -48,7 +60,8 @@ export class RendezVousClientComponent implements OnInit {
     private categorieService: CategorieServiceService,
     private vehiculeService: VehiculeService,
     private creneauxService: CreneauxServiceService,
-    private alerteService: AlerteService
+    private alerteService: AlerteService,
+    private notificationService: NotificationService
   ) {
     this.alerteService.message$.subscribe(msg => {
       this.message = msg;
@@ -66,7 +79,27 @@ export class RendezVousClientComponent implements OnInit {
     this.loadRendezVousClients();
     this.getCategorieServices();
     this.getVehicules();
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const transformedFilter = filter.trim().toLowerCase();
+  
+      return (
+        (`${data.id_vehicule.marque} ${data.id_vehicule.modele} ${data.id_vehicule.immatriculation}`
+          .toLowerCase().includes(transformedFilter)) || // Recherche sur le véhicule
+        (data.CategorieServices.some((categ: { description: string }) => 
+          categ.description.toLowerCase().includes(transformedFilter))) || // Catégorie Services
+        (data.date_heure ? new Date(data.date_heure).toLocaleDateString('fr-FR').includes(transformedFilter) : false) || // Date & Heure
+        (data.duree_totale?.toString().includes(transformedFilter)) || // Durée
+        (this.getStatus(data).toLowerCase().includes(transformedFilter)) // Status
+      );
+    };
   }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
+  }  
 
   onDateChange() {
     if (this.selectedDate) {
@@ -116,11 +149,22 @@ export class RendezVousClientComponent implements OnInit {
       data => {
         console.log("Données reçues :", data);
         this.rendez_vous_client = data.rendezVous;
+        this.dataSource.data = this.rendez_vous_client; // Mettre à jour la dataSource après la récupération des données
+      
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        });
       },
       error => {
         console.error("Erreur lors du chargement des rendez-vous clients :", error);
       }
     );
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   getCategorieServices(): void {

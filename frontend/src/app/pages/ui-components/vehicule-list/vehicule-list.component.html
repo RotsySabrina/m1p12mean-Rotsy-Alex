@@ -48,8 +48,19 @@
 <mat-card class="cardWithShadow">
     <mat-card-content>
         <mat-card-title>Liste des véhicules</mat-card-title>
+        <!-- Barre de recherche -->
+        <div class="search-bar">
+            <mat-form-field appearance="outline">
+              <mat-label>Rechercher</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Véhicule">
+              <button mat-icon-button matSuffix aria-label="Rechercher">
+                <mat-icon>search</mat-icon> <!-- Icône de recherche -->
+              </button>
+            </mat-form-field>
+          </div>
+
         <div class="table-responsive">
-            <table mat-table [dataSource]="vehicules" class="w-100">
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
                 <!-- Marque -->
                 <ng-container matColumnDef="marque">
                     <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14"> Marque </th>
@@ -86,6 +97,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            <mat-paginator [pageSize]="5" [hidePageSize]="true"></mat-paginator>
         </div>
     </mat-card-content>
 </mat-card>

@@ -1,6 +1,7 @@
 const RendezVousClient = require("../models/RendezVousClient");
 const RendezVousCategorieService = require("../models/RendezVousCategorieService");
 const CategorieService = require("../models/CategorieService");
+const Notification = require("../models/Notification");
 const User = require("../models/User");
 
 exports.createRendezVousWithCategorieServices = async (req, res) => {
@@ -34,25 +35,15 @@ exports.createRendezVousWithCategorieServices = async (req, res) => {
 
         await RendezVousCategorieService.insertMany(catServicesAssocies);
 
-        // === CRÉER UNE NOTIFICATION POUR LE MANAGER ===
-        // const managers = await User.find({ role: "manager" });
-        // const notifications = managers.map(manager => ({
-        //     userId: manager._id,
-        //     message: `Nouveau rendez-vous de ${req.user.email} pour le ${date_heure}`
-        // }));
-
-        // await Notification.insertMany(notifications);
-
-        // // === ENVOYER LA NOTIFICATION EN TEMPS RÉEL VIA SOCKET.IO ===
-        // managers.forEach(manager => {
-        //     const managerSocketId = req.users[manager._id.toString()];
-        //     if (managerSocketId) {
-        //         req.io.to(managerSocketId).emit("newNotification", {
-        //             message: `Nouveau rendez-vous de ${req.user.email} pour le ${date_heure}`
-        //         });
-        //     }
-        // });
-        //
+        // 🔹 Ajout de la notification pour le manager
+        const manager = await User.find({ role: "manager" }); // Trouver le manager
+        if (manager) {
+            const newNotification = new Notification({
+                userId: manager._id,
+                message: `Nouveau rendez-vous prévu le ${date_heure} pour le véhicule ${id_vehicule}.`,
+            });
+            await newNotification.save();
+        }
 
         res.status(201).json({ message: "Rendez-vous et services ajoutés avec succès", savedRdv });
 
@@ -117,6 +108,14 @@ exports.updateRendezVousMecanicien = async (req, res) => {
 
         rendezVous.id_mecanicien = mecanicienId;
         await rendezVous.save();
+
+        // 🔹 Ajout de la notification pour le manager
+        const newNotification = new Notification({
+            userId: mecanicienId,  // Envoyer la notification au mécanicien
+            message: `Vous avez été assigné au rendez-vous ID ${rendezVousId}.`,  // Message de notification
+        });
+
+        await newNotification.save();
 
         return res.status(200).json({
             success: true,

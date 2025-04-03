@@ -7,4 +7,4 @@ const NotificationSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("Notification", NavigationHistoryEntryotificationSchema);
+module.exports = mongoose.model("Notification", NotificationSchema);

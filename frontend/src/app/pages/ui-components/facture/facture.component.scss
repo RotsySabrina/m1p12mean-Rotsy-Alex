@@ -1,0 +1,40 @@
+.search-bar {
+    display: flex;
+    justify-content: flex-end; /* Aligne la barre de recherche à droite */
+    margin-bottom: 16px; /* Espacement sous la barre */
+  }
+  
+  .mat-form-field {
+    width: 500px; /* Largeur de la barre de recherche */
+  }
+  
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    border: 1px solid #ccc; /* Bordure légère grise pour le cadre */
+    border-radius: 4px; /* Coins arrondis */
+  }
+  
+  .mat-form-field-appearance-outline .mat-form-field-label {
+    color: #333; /* Couleur de l'étiquette */
+  }
+  
+  .mat-form-field-appearance-outline .mat-form-field-underline {
+    display: none; /* Supprime la ligne de soulignement */
+  }
+  
+  input.mat-input-element {
+    font-size: 14px;
+    padding: 8px 12px; /* Espacement intérieur de l'input */
+    border: none; /* Enlève la bordure de l'input */
+    outline: none; /* Enlève le contour du focus */
+  }
+  
+  button.mat-icon-button {
+    background: none;
+    border: none;
+  }
+  
+  button.mat-icon-button mat-icon {
+    color: #3f51b5; /* Couleur bleue pour l'icône */
+    font-size: 20px; /* Taille de l'icône */
+  }
+  
