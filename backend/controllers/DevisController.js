@@ -221,4 +221,46 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
+exports.getTauxRefusDevis = async (req, res) => {
+  try {
+    const annee = parseInt(req.query.annee) || new Date().getFullYear();
+
+    if (!annee) {
+      return res.status(400).json({ message: "L'année est requise." });
+    }
+
+    const debut = new Date(`${annee}-01-01T00:00:00.000Z`);
+    const fin = new Date(`${parseInt(annee) + 1}-01-01T00:00:00.000Z`);
+
+    const devis = await Devis.find({
+      date_devis: { $gte: debut, $lt: fin }
+    });
+
+    const total = devis.length;
+
+    const total_acceptes = devis.filter(d => d.status === "accepte").length;
+    const total_refuses = devis.filter(d => d.status === "refuse").length;
+    const total_en_attente = devis.filter(d => d.status === "en_attente").length;
+
+    const formatPourcentage = (valeur) => {
+      return total === 0 ? 0 : (valeur / total) * 100;
+    };    
+
+    return res.status(200).json({
+      annee,
+      total_devis: total,
+      total_acceptes,
+      total_refuses,
+      total_en_attente,
+      taux_acceptes: formatPourcentage(total_acceptes),
+      taux_refuses: formatPourcentage(total_refuses),
+      taux_en_attente: formatPourcentage(total_en_attente)
+    });
+  } catch (error) {
+    console.error("Erreur stat devis:", error);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+
 

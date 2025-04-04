@@ -1,24 +1,45 @@
-<mat-card class="cardWithShadow theme-card">
-    <mat-card-header>
+<div class="graph-container">
+    <!-- Carte 1 : Rendez-vous -->
+    <mat-card class="cardWithShadow theme-card graph-card">
+      <mat-card-header>
         <mat-card-title class="m-b-0">Statistiques des rendez-vous par mois</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="b-t-1">
-        <!-- Sélection de l'année -->
+      </mat-card-header>
+      <mat-card-content class="b-t-1">
         <div class="row d-flex align-items-center gap-3">
-            <div class="col">
-                <mat-label class="f-w-600 m-b-8 d-block">Année</mat-label>
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-select id="annee" [(ngModel)]="anneeSelectionnee" (selectionChange)="loadStatistiques()">
-                        <mat-option [value]="null" disabled>Sélectionner une année</mat-option>
-                        <mat-option *ngFor="let an of [2023, 2024, 2025, 2026]" [value]="an">
-                            {{ an }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-label class="f-w-600 m-b-8 d-block">Année</mat-label>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-select id="annee" [(ngModel)]="anneeSelectionnee" (selectionChange)="loadStatistiques()">
+                <mat-option [value]="null" disabled>Sélectionner une année</mat-option>
+                <mat-option *ngFor="let an of anneesDisponibles" [value]="an">{{ an }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
-
-        <!-- Zone de graphique -->
         <div #chartDiv style="width: 100%; height: 400px;"></div>
-    </mat-card-content>
-</mat-card>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Carte 2 : Devis -->
+    <mat-card class="cardWithShadow theme-card graph-card">
+        <mat-card-header>
+          <mat-card-title class="m-b-0">Répartition des statuts des devis</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1">
+          <div class="row d-flex align-items-center gap-3">
+            <div class="col">
+              <mat-label class="f-w-600 m-b-8 d-block">Année</mat-label>
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-select [(ngModel)]="anneeDevis" (selectionChange)="loadDevisStats()">
+                  <mat-option [value]="null" disabled>Sélectionner une année</mat-option>
+                  <mat-option *ngFor="let an of anneesDisponibles" [value]="an">{{ an }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Utilisation d'une classe CSS pour centrer le graphique -->
+          <div #pieChartDiv class="pie-chart-container"></div>
+        </mat-card-content>      
+    </mat-card>
+  </div>
+  
