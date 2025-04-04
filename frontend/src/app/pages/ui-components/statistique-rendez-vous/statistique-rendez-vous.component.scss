@@ -1,0 +1,22 @@
+.graph-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .graph-card {
+    flex: 1 1 48%;
+  }
+
+  .pie-chart-container {
+    width: 100%;  /* Utiliser toute la largeur disponible dans le conteneur */
+    max-width: 400px;  /* Limiter à une largeur maximale de 400px */
+    height: 400px;
+    margin: auto;  /* Centrer horizontalement */
+    display: flex;
+    justify-content: center;  /* Centrer horizontalement */
+    align-items: center;  /* Centrer verticalement */
+  }
+  
+  
+  
