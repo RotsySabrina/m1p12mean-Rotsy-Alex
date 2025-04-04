@@ -8,7 +8,7 @@ const Notification = require("../models/Notification");
 exports.createDevis = async (req, res) => {
   try {
     const { id_rendez_vous_client, montant_total } = req.body;
-    console.log("📩 Données reçues :", { id_rendez_vous_client, montant_total });
+    console.log("📩 Données reçues du montant:", { id_rendez_vous_client, montant_total });
 
     const newDevis = new Devis({
       id_rendez_vous_client,
