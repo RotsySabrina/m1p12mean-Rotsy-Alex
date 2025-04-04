@@ -11,7 +11,7 @@ export const navItems: NavItem[] = [
     roles: ['manager', 'mecanicien', 'client'],
   },
   {
-    displayName: 'Stat rendez-vous',
+    displayName: 'Statistique',
     iconName: 'solar:chart-line-duotone',
     route: '/ui-components/stat_rdv',
     roles: ['manager'],
